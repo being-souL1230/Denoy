@@ -1,0 +1,533 @@
+{
+  "topic": "What should I verify before applying for a scholarship?",
+  "run_date": "2026-10-30",
+  "disclaimer": "This tool identifies potential information gaps, variances, and outdated signals based solely on the provided sources. It does not establish absolute truth or absence. Always confirm critical terms with the official governing body.",
+  "checklist": [
+    {
+      "key": "eligibility_criteria",
+      "label": "Eligibility Criteria",
+      "why": "Missing eligibility details can lead to wasted effort on applications you cannot receive.",
+      "importance": "high",
+      "search_terms": [
+        "scholarship eligibility",
+        "who can apply",
+        "eligibility requirements"
+      ],
+      "origin": "ai_suggestion"
+    },
+    {
+      "key": "application_deadline",
+      "label": "Application Deadline",
+      "why": "Missing the deadline means your application will be rejected outright.",
+      "importance": "high",
+      "search_terms": [
+        "scholarship deadline",
+        "application due date",
+        "deadline 2024"
+      ],
+      "origin": "ai_suggestion"
+    },
+    {
+      "key": "required_documents",
+      "label": "Required Documents",
+      "why": "Incomplete documentation results in an incomplete application and possible disqualification.",
+      "importance": "high",
+      "search_terms": [
+        "scholarship documents",
+        "required paperwork",
+        "application checklist"
+      ],
+      "origin": "ai_suggestion"
+    },
+    {
+      "key": "gpa_requirements",
+      "label": "GPA Requirements",
+      "why": "Not meeting GPA thresholds can cause automatic rejection.",
+      "importance": "medium",
+      "search_terms": [
+        "minimum gpa scholarship",
+        "gpa cutoff",
+        "academic standing requirement"
+      ],
+      "origin": "ai_suggestion"
+    },
+    {
+      "key": "essay_prompt",
+      "label": "Essay Prompt",
+      "why": "Misunderstanding the prompt can produce an irrelevant essay and lower your chances.",
+      "importance": "medium",
+      "search_terms": [
+        "scholarship essay question",
+        "essay guidelines",
+        "personal statement prompt"
+      ],
+      "origin": "ai_suggestion"
+    },
+    {
+      "key": "recommendation_letters",
+      "label": "Recommendation Letters",
+      "why": "Insufficient or inappropriate references can weaken your application.",
+      "importance": "medium",
+      "search_terms": [
+        "scholarship recommendation",
+        "reference letter requirements",
+        "how many letters needed"
+      ],
+      "origin": "ai_suggestion"
+    },
+    {
+      "key": "award_amount",
+      "label": "Award Amount",
+      "why": "Knowing the amount helps you assess whether the scholarship meets your financial needs.",
+      "importance": "low",
+      "search_terms": [
+        "scholarship amount",
+        "award value",
+        "financial award details"
+      ],
+      "origin": "ai_suggestion"
+    },
+    {
+      "key": "renewal_requirements",
+      "label": "Renewal Requirements",
+      "why": "Failing to meet renewal criteria can cause loss of funding after the first year.",
+      "importance": "medium",
+      "search_terms": [
+        "scholarship renewal",
+        "continuation criteria",
+        "maintain scholarship"
+      ],
+      "origin": "ai_suggestion"
+    },
+    {
+      "key": "selection_process",
+      "label": "Selection Process",
+      "why": "Understanding how candidates are evaluated lets you tailor your application effectively.",
+      "importance": "medium",
+      "search_terms": [
+        "scholarship selection",
+        "review process",
+        "how winners are chosen"
+      ],
+      "origin": "ai_suggestion"
+    },
+    {
+      "key": "tax_implications",
+      "label": "Tax Implications",
+      "why": "Overlooking tax responsibilities can lead to unexpected financial liabilities.",
+      "importance": "low",
+      "search_terms": [
+        "scholarship tax",
+        "taxable scholarship",
+        "financial aid tax rules"
+      ],
+      "origin": "ai_suggestion"
+    }
+  ],
+  "sources": [
+    {
+      "id": "S1",
+      "url": null,
+      "title": "Website A (Official Guidelines)",
+      "kind": "pasted",
+      "is_official": true,
+      "ok": true,
+      "truncated": false,
+      "date": null,
+      "date_source": null,
+      "cycles": [],
+      "text": "Merit Scholarship Guidelines: Minimum 60% marks required in qualifying examination. Application deadline is 30 November."
+    },
+    {
+      "id": "S2",
+      "url": null,
+      "title": "Website B (Education Portal)",
+      "kind": "pasted",
+      "is_official": false,
+      "ok": true,
+      "truncated": false,
+      "date": null,
+      "date_source": null,
+      "cycles": [],
+      "text": "Scholarship Eligibility Update: Minimum 75% marks required for selection. Deadline is 15 December. Renewal requires maintaining 70% in each semester."
+    },
+    {
+      "id": "S3",
+      "url": null,
+      "title": "Website C (Old Forum Post)",
+      "kind": "pasted",
+      "is_official": false,
+      "ok": true,
+      "truncated": false,
+      "date": null,
+      "date_source": null,
+      "cycles": [
+        2022
+      ],
+      "text": "Scholarship 2022-23 cycle details: Last date to apply is 31 March 2023. Documents needed: Income certificate."
+    }
+  ],
+  "findings": [
+    {
+      "field_key": "eligibility_criteria",
+      "label": "Eligibility Criteria",
+      "source_id": "S1",
+      "source_title": "Website A (Official Guidelines)",
+      "value": "Minimum 60% marks in qualifying exam",
+      "quote": "Minimum 60% marks required in qualifying examination.",
+      "match": "exact",
+      "label_type": "sourced"
+    },
+    {
+      "field_key": "application_deadline",
+      "label": "Application Deadline",
+      "source_id": "S1",
+      "source_title": "Website A (Official Guidelines)",
+      "value": "30 November",
+      "quote": "Application deadline is 30 November.",
+      "match": "exact",
+      "label_type": "sourced"
+    },
+    {
+      "field_key": "eligibility_criteria",
+      "label": "Eligibility Criteria",
+      "source_id": "S2",
+      "source_title": "Website B (Education Portal)",
+      "value": "Minimum 75% marks required",
+      "quote": "Minimum 75% marks required for selection.",
+      "match": "exact",
+      "label_type": "sourced"
+    },
+    {
+      "field_key": "application_deadline",
+      "label": "Application Deadline",
+      "source_id": "S2",
+      "source_title": "Website B (Education Portal)",
+      "value": "15 December",
+      "quote": "Deadline is 15 December.",
+      "match": "exact",
+      "label_type": "sourced"
+    },
+    {
+      "field_key": "renewal_requirements",
+      "label": "Renewal Requirements",
+      "source_id": "S2",
+      "source_title": "Website B (Education Portal)",
+      "value": "Maintain 70% each semester",
+      "quote": "Renewal requires maintaining 70% in each semester.",
+      "match": "exact",
+      "label_type": "sourced"
+    },
+    {
+      "field_key": "application_deadline",
+      "label": "Application Deadline",
+      "source_id": "S3",
+      "source_title": "Website C (Old Forum Post)",
+      "value": "31 March 2023",
+      "quote": "Last date to apply is 31 March 2023.",
+      "match": "exact",
+      "label_type": "sourced"
+    },
+    {
+      "field_key": "required_documents",
+      "label": "Required Documents",
+      "source_id": "S3",
+      "source_title": "Website C (Old Forum Post)",
+      "value": "Income certificate",
+      "quote": "Documents needed: Income certificate.",
+      "match": "exact",
+      "label_type": "sourced"
+    }
+  ],
+  "gaps": [
+    {
+      "field_key": "gpa_requirements",
+      "label": "GPA Requirements",
+      "importance": "medium",
+      "why": "Not meeting GPA thresholds can cause automatic rejection.",
+      "caution": false,
+      "label_type": "ai_suggestion"
+    },
+    {
+      "field_key": "essay_prompt",
+      "label": "Essay Prompt",
+      "importance": "medium",
+      "why": "Misunderstanding the prompt can produce an irrelevant essay and lower your chances.",
+      "caution": false,
+      "label_type": "ai_suggestion"
+    },
+    {
+      "field_key": "recommendation_letters",
+      "label": "Recommendation Letters",
+      "importance": "medium",
+      "why": "Insufficient or inappropriate references can weaken your application.",
+      "caution": false,
+      "label_type": "ai_suggestion"
+    },
+    {
+      "field_key": "award_amount",
+      "label": "Award Amount",
+      "importance": "low",
+      "why": "Knowing the amount helps you assess whether the scholarship meets your financial needs.",
+      "caution": false,
+      "label_type": "ai_suggestion"
+    },
+    {
+      "field_key": "selection_process",
+      "label": "Selection Process",
+      "importance": "medium",
+      "why": "Understanding how candidates are evaluated lets you tailor your application effectively.",
+      "caution": false,
+      "label_type": "ai_suggestion"
+    },
+    {
+      "field_key": "tax_implications",
+      "label": "Tax Implications",
+      "importance": "low",
+      "why": "Overlooking tax responsibilities can lead to unexpected financial liabilities.",
+      "caution": false,
+      "label_type": "ai_suggestion"
+    }
+  ],
+  "conflicts": [
+    {
+      "field_key": "eligibility_criteria",
+      "label": "Eligibility Criteria",
+      "importance": "high",
+      "relation": "conflict",
+      "explanation": "Source A requires a minimum of 60% marks, whereas Source B requires a minimum of 75% marks, presenting contradictory eligibility thresholds.",
+      "a": {
+        "field_key": "eligibility_criteria",
+        "label": "Eligibility Criteria",
+        "source_id": "S1",
+        "source_title": "Website A (Official Guidelines)",
+        "value": "Minimum 60% marks in qualifying exam",
+        "quote": "Minimum 60% marks required in qualifying examination.",
+        "match": "exact",
+        "label_type": "sourced"
+      },
+      "b": {
+        "field_key": "eligibility_criteria",
+        "label": "Eligibility Criteria",
+        "source_id": "S2",
+        "source_title": "Website B (Education Portal)",
+        "value": "Minimum 75% marks required",
+        "quote": "Minimum 75% marks required for selection.",
+        "match": "exact",
+        "label_type": "sourced"
+      },
+      "label_type": "sourced"
+    },
+    {
+      "field_key": "application_deadline",
+      "label": "Application Deadline",
+      "importance": "high",
+      "relation": "conflict",
+      "explanation": "Source A states the deadline is 30 November, whereas Source B states it is 15 December, presenting contradictory dates.",
+      "a": {
+        "field_key": "application_deadline",
+        "label": "Application Deadline",
+        "source_id": "S1",
+        "source_title": "Website A (Official Guidelines)",
+        "value": "30 November",
+        "quote": "Application deadline is 30 November.",
+        "match": "exact",
+        "label_type": "sourced"
+      },
+      "b": {
+        "field_key": "application_deadline",
+        "label": "Application Deadline",
+        "source_id": "S2",
+        "source_title": "Website B (Education Portal)",
+        "value": "15 December",
+        "quote": "Deadline is 15 December.",
+        "match": "exact",
+        "label_type": "sourced"
+      },
+      "label_type": "sourced"
+    },
+    {
+      "field_key": "application_deadline",
+      "label": "Application Deadline",
+      "importance": "high",
+      "relation": "conflict",
+      "explanation": "One source states the deadline is 30 November, while the other specifies 31 March 2023, presenting contradictory dates.",
+      "a": {
+        "field_key": "application_deadline",
+        "label": "Application Deadline",
+        "source_id": "S1",
+        "source_title": "Website A (Official Guidelines)",
+        "value": "30 November",
+        "quote": "Application deadline is 30 November.",
+        "match": "exact",
+        "label_type": "sourced"
+      },
+      "b": {
+        "field_key": "application_deadline",
+        "label": "Application Deadline",
+        "source_id": "S3",
+        "source_title": "Website C (Old Forum Post)",
+        "value": "31 March 2023",
+        "quote": "Last date to apply is 31 March 2023.",
+        "match": "exact",
+        "label_type": "sourced"
+      },
+      "label_type": "sourced"
+    },
+    {
+      "field_key": "application_deadline",
+      "label": "Application Deadline",
+      "importance": "high",
+      "relation": "conflict",
+      "explanation": "One source states the deadline is 15\u202fDecember, while the other says the last date to apply is 31\u202fMarch\u202f2023, which are contradictory dates.",
+      "a": {
+        "field_key": "application_deadline",
+        "label": "Application Deadline",
+        "source_id": "S2",
+        "source_title": "Website B (Education Portal)",
+        "value": "15 December",
+        "quote": "Deadline is 15 December.",
+        "match": "exact",
+        "label_type": "sourced"
+      },
+      "b": {
+        "field_key": "application_deadline",
+        "label": "Application Deadline",
+        "source_id": "S3",
+        "source_title": "Website C (Old Forum Post)",
+        "value": "31 March 2023",
+        "quote": "Last date to apply is 31 March 2023.",
+        "match": "exact",
+        "label_type": "sourced"
+      },
+      "label_type": "sourced"
+    }
+  ],
+  "outdated": [
+    {
+      "source_id": "S1",
+      "title": "Website A (Official Guidelines)",
+      "severity": "low",
+      "reason": "No publication date or academic cycle found, so freshness cannot be verified."
+    },
+    {
+      "source_id": "S2",
+      "title": "Website B (Education Portal)",
+      "severity": "low",
+      "reason": "No publication date or academic cycle found, so freshness cannot be verified."
+    },
+    {
+      "source_id": "S3",
+      "title": "Website C (Old Forum Post)",
+      "severity": "high",
+      "reason": "Latest cycle mentioned is 2022-23, which appears to be an older cycle."
+    },
+    {
+      "source_id": "S3",
+      "title": "Website C (Old Forum Post)",
+      "severity": "high",
+      "reason": "Extracted Application Deadline mentions only 2023: '31 March 2023'."
+    }
+  ],
+  "uncertain": [],
+  "verify_next": [
+    {
+      "type": "conflict",
+      "score": 5.0,
+      "field": "Eligibility Criteria",
+      "action": "Resolve contradiction for 'Eligibility Criteria'. Sources provide conflicting details; verify against the official notice.",
+      "rank": 1,
+      "priority": "P1"
+    },
+    {
+      "type": "conflict",
+      "score": 5.0,
+      "field": "Application Deadline",
+      "action": "Resolve contradiction for 'Application Deadline'. Sources provide conflicting details; verify against the official notice.",
+      "rank": 2,
+      "priority": "P1"
+    },
+    {
+      "type": "outdated",
+      "score": 3.5,
+      "field": "Website C (Old Forum Post)",
+      "action": "Confirm freshness of 'Website C (Old Forum Post)'. Latest cycle mentioned is 2022-23, which appears to be an older cycle. Extracted Application Deadline mentions only 2023: '31 March 2023'.",
+      "rank": 3,
+      "priority": "P2"
+    },
+    {
+      "type": "gap",
+      "score": 3.0,
+      "field": "GPA Requirements",
+      "action": "Verify 'GPA Requirements' on the official source. It was not found in any of the reviewed sources.",
+      "rank": 4,
+      "priority": "P2"
+    },
+    {
+      "type": "gap",
+      "score": 3.0,
+      "field": "Essay Prompt",
+      "action": "Verify 'Essay Prompt' on the official source. It was not found in any of the reviewed sources.",
+      "rank": 5,
+      "priority": "P2"
+    },
+    {
+      "type": "gap",
+      "score": 3.0,
+      "field": "Recommendation Letters",
+      "action": "Verify 'Recommendation Letters' on the official source. It was not found in any of the reviewed sources.",
+      "rank": 6,
+      "priority": "P2"
+    },
+    {
+      "type": "gap",
+      "score": 3.0,
+      "field": "Selection Process",
+      "action": "Verify 'Selection Process' on the official source. It was not found in any of the reviewed sources.",
+      "rank": 7,
+      "priority": "P2"
+    },
+    {
+      "type": "gap",
+      "score": 2.0,
+      "field": "Award Amount",
+      "action": "Verify 'Award Amount' on the official source. It was not found in any of the reviewed sources.",
+      "rank": 8,
+      "priority": "P3"
+    },
+    {
+      "type": "gap",
+      "score": 2.0,
+      "field": "Tax Implications",
+      "action": "Verify 'Tax Implications' on the official source. It was not found in any of the reviewed sources.",
+      "rank": 9,
+      "priority": "P3"
+    },
+    {
+      "type": "outdated",
+      "score": 1.5,
+      "field": "Website A (Official Guidelines)",
+      "action": "Confirm freshness of 'Website A (Official Guidelines)'. No publication date or academic cycle found, so freshness cannot be verified.",
+      "rank": 10,
+      "priority": "P3"
+    },
+    {
+      "type": "outdated",
+      "score": 1.5,
+      "field": "Website B (Education Portal)",
+      "action": "Confirm freshness of 'Website B (Education Portal)'. No publication date or academic cycle found, so freshness cannot be verified.",
+      "rank": 11,
+      "priority": "P3"
+    }
+  ],
+  "stats": {
+    "sources_used": 3,
+    "sources_failed": 0,
+    "fields": 10,
+    "covered": 4,
+    "gaps": 6,
+    "conflicts": 4,
+    "outdated": 4,
+    "uncertain": 0
+  }
+}
