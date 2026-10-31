@@ -11,6 +11,14 @@
           "engine/**"
         ]
       }
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "dashboard.html",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -29,6 +37,18 @@
     {
       "src": "/js/(.*)",
       "dest": "/public/js/$1"
+    },
+    {
+      "src": "/$",
+      "dest": "/dashboard.html"
+    },
+    {
+      "src": "/analyze",
+      "dest": "app.py"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "app.py"
     },
     {
       "src": "/(.*)",
