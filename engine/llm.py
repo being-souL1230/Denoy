@@ -33,7 +33,7 @@ def load_env(path: str = ".env"):
 
 load_env()
 
-CACHE_DIR = Path(".cache")
+CACHE_DIR = Path("/tmp/.cache") if (os.getenv("VERCEL") or os.getenv("AWS_LAMBDA_FUNCTION_NAME")) else Path(".cache")
 CACHE_FILE = CACHE_DIR / "llm_cache.json"
 
 # Provider Keys

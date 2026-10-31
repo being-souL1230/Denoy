@@ -23,14 +23,20 @@ app.add_middleware(
 from fastapi.staticfiles import StaticFiles
 import os
 
-if os.path.exists("public"):
-    app.mount("/public", StaticFiles(directory="public"), name="public")
-    if os.path.exists("public/images"):
-        app.mount("/images", StaticFiles(directory="public/images"), name="images")
-    if os.path.exists("public/css"):
-        app.mount("/css", StaticFiles(directory="public/css"), name="css")
-    if os.path.exists("public/js"):
-        app.mount("/js", StaticFiles(directory="public/js"), name="js")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+public_dir = os.path.join(BASE_DIR, "public")
+
+if os.path.exists(public_dir):
+    app.mount("/public", StaticFiles(directory=public_dir), name="public")
+    images_dir = os.path.join(public_dir, "images")
+    if os.path.exists(images_dir):
+        app.mount("/images", StaticFiles(directory=images_dir), name="images")
+    css_dir = os.path.join(public_dir, "css")
+    if os.path.exists(css_dir):
+        app.mount("/css", StaticFiles(directory=css_dir), name="css")
+    js_dir = os.path.join(public_dir, "js")
+    if os.path.exists(js_dir):
+        app.mount("/js", StaticFiles(directory=js_dir), name="js")
 
 
 class AnalyzeRequest(BaseModel):
@@ -60,6 +66,7 @@ def analyze(req: AnalyzeRequest):
 
 @app.get("/")
 def home():
-    return FileResponse("dashboard.html")
+    html_path = os.path.join(BASE_DIR, "dashboard.html")
+    return FileResponse(html_path)
 
 
