@@ -1435,3 +1435,109 @@ html[data-theme="dark"] .site-footer {
 html[data-theme="dark"] .footer-note {
   color: #7c947d !important;
 }
+
+/* --------------------------------------------------------------------------
+   Knowledge Gap Graph (Dark Emerald Obsidian)
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .gap-graph-container {
+  background: #111a13 !important;
+  border-color: #233726 !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .gap-graph-header {
+  background: #142016 !important;
+  border-bottom-color: #233726 !important;
+}
+
+html[data-theme="dark"] .gap-graph-title {
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .gap-graph-subtitle {
+  color: #94a896 !important;
+}
+
+html[data-theme="dark"] .gap-graph-toolbar {
+  background: #111a13 !important;
+  border-bottom-color: #233726 !important;
+}
+
+html[data-theme="dark"] .graph-filter-pill {
+  background: #18281b !important;
+  border-color: #27402c !important;
+  color: #d1e5d3 !important;
+}
+
+html[data-theme="dark"] .graph-filter-pill:hover {
+  background: #1f3624 !important;
+  border-color: #3b5f42 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .graph-filter-pill.is-active {
+  background: #22c55e !important;
+  color: #052e16 !important;
+  border-color: #22c55e !important;
+  font-weight: 700 !important;
+}
+
+html[data-theme="dark"] .gap-graph-legend {
+  color: #94a896 !important;
+}
+
+html[data-theme="dark"] .gap-graph-svg-wrap {
+  background: #0d140e !important;
+}
+
+html[data-theme="dark"] .gap-inspector-container {
+  background: #111a13 !important;
+  border-top-color: #233726 !important;
+}
+
+html[data-theme="dark"] .inspector-empty-state {
+  color: #7d9680 !important;
+}
+
+html[data-theme="dark"] .inspector-card {
+  background: #152218 !important;
+  border-color: #253d29 !important;
+}
+
+html[data-theme="dark"] .inspector-header {
+  border-bottom-color: #253d29 !important;
+}
+
+html[data-theme="dark"] .inspector-title {
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .inspector-source-box {
+  background: #0f1911 !important;
+  border-color: #233726 !important;
+}
+
+html[data-theme="dark"] .inspector-close-btn:hover {
+  background: #233726 !important;
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .graph-node-rect {
+  fill: #152317 !important;
+  stroke: #2c4630 !important;
+}
+
+html[data-theme="dark"] .graph-node-text {
+  fill: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .graph-node-subtext {
+  fill: #94a896 !important;
+}
+
+html[data-theme="dark"] .graph-node:hover .graph-node-rect {
+  stroke: #4ade80 !important;
+  filter: drop-shadow(0 4px 14px rgba(74, 222, 128, 0.15)) !important;
+}
+
+

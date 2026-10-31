@@ -363,7 +363,7 @@
     }
 
     function switchIntelTab(tab) {
-      const tabs = ['overview', 'matrix', 'entities', 'gaps', 'conflicts', 'outdated', 'verify'];
+      const tabs = ['overview', 'graph', 'matrix', 'entities', 'gaps', 'conflicts', 'outdated', 'verify'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
         const panel = document.getElementById(`intel-panel-${t}`);
@@ -647,8 +647,14 @@
       `;
 
       // 2. Tab Badge Counts
-      document.getElementById('count-gaps').textContent = (R.gaps || []).length;
-      document.getElementById('count-conflicts').textContent = (R.conflicts || []).length;
+      const totalGaps = (R.gaps || []).length;
+      const totalConflicts = (R.conflicts || []).length;
+      const countGraphEl = document.getElementById('count-graph');
+      if (countGraphEl) {
+        countGraphEl.textContent = (totalGaps + totalConflicts) > 0 ? `${totalGaps + totalConflicts} Alerts` : `${(R.checklist || []).length} Items`;
+      }
+      document.getElementById('count-gaps').textContent = totalGaps;
+      document.getElementById('count-conflicts').textContent = totalConflicts;
       document.getElementById('count-outdated').textContent = (R.outdated || []).length;
       document.getElementById('count-verify').textContent = (R.verify_next || []).length;
 
@@ -1305,6 +1311,9 @@
 
       // Render the Deterministic Critical Entities Side-by-Side Panel
       renderCriticalEntitiesPanel();
+
+      // Render the Interactive Knowledge Gap Graph
+      renderKnowledgeGapGraph();
     }
 
     function renderCriticalEntitiesPanel() {
@@ -1522,6 +1531,525 @@
       }
 
       container.innerHTML = html;
+    }
+
+    // --------------------------------------------------------------------------
+    // Feature 3: Interactive Knowledge Gap & Multi-Source Relationship Graph
+    // --------------------------------------------------------------------------
+    let currentGraphFilter = 'all';
+    let selectedGraphNode = null;
+    let graphSearchQuery = '';
+
+    function setGraphFilter(f) {
+      currentGraphFilter = f;
+      ['all', 'gaps', 'conflicts', 'sourced'].forEach(k => {
+        const btn = document.getElementById(`graph-pill-${k}`);
+        if (btn) btn.classList.toggle('is-active', k === f);
+      });
+      applyGraphFilter();
+    }
+
+    function searchGraph(query) {
+      graphSearchQuery = (query || '').toLowerCase().trim();
+      applyGraphFilter();
+    }
+
+    function applyGraphFilter() {
+      const edges = document.querySelectorAll('.graph-edge');
+      const critNodes = document.querySelectorAll('.graph-node-crit');
+
+      const visibleFields = new Set();
+
+      critNodes.forEach(node => {
+        const status = node.getAttribute('data-status');
+        const label = (node.getAttribute('data-label') || '').toLowerCase();
+        let matchesFilter = false;
+        if (currentGraphFilter === 'all') matchesFilter = true;
+        else if (currentGraphFilter === 'gaps' && (status === 'gap' || status === 'partial')) matchesFilter = true;
+        else if (currentGraphFilter === 'conflicts' && status === 'conflict') matchesFilter = true;
+        else if (currentGraphFilter === 'sourced' && status === 'sourced') matchesFilter = true;
+
+        const matchesSearch = !graphSearchQuery || label.includes(graphSearchQuery);
+        const show = matchesFilter && matchesSearch;
+
+        node.style.display = show ? '' : 'none';
+        if (show) visibleFields.add(node.getAttribute('data-field'));
+      });
+
+      edges.forEach(edge => {
+        const type = edge.getAttribute('data-type');
+        const field = edge.getAttribute('data-field');
+        let matchesFilter = false;
+        if (currentGraphFilter === 'all') matchesFilter = true;
+        else if (currentGraphFilter === 'gaps' && type === 'gap') matchesFilter = true;
+        else if (currentGraphFilter === 'conflicts' && type === 'conflict') matchesFilter = true;
+        else if (currentGraphFilter === 'sourced' && type === 'sourced') matchesFilter = true;
+
+        const show = matchesFilter && visibleFields.has(field);
+        edge.style.display = show ? '' : 'none';
+      });
+    }
+
+    function hoverGraphNode(type, id) {
+      if (selectedGraphNode) return;
+      const edges = document.querySelectorAll('.graph-edge');
+      const nodes = document.querySelectorAll('.graph-node');
+
+      edges.forEach(e => {
+        const match = (type === 'source' && e.getAttribute('data-source') === id) ||
+                      (type === 'crit' && e.getAttribute('data-field') === id);
+        e.classList.toggle('is-highlighted', match);
+        e.classList.toggle('is-dimmed', !match);
+      });
+
+      nodes.forEach(n => {
+        const isTarget = (type === 'source' && n.getAttribute('data-source-id') === id) ||
+                         (type === 'crit' && n.getAttribute('data-field') === id);
+        n.classList.toggle('is-highlighted', isTarget);
+      });
+    }
+
+    function clearGraphHover() {
+      if (selectedGraphNode) return;
+      document.querySelectorAll('.graph-edge').forEach(e => {
+        e.classList.remove('is-highlighted', 'is-dimmed');
+      });
+      document.querySelectorAll('.graph-node').forEach(n => {
+        n.classList.remove('is-highlighted', 'is-dimmed');
+      });
+    }
+
+    function selectGraphNode(type, id) {
+      if (selectedGraphNode && selectedGraphNode.type === type && selectedGraphNode.id === id) {
+        clearGraphSelection();
+        return;
+      }
+      selectedGraphNode = { type, id };
+
+      const edges = document.querySelectorAll('.graph-edge');
+      const nodes = document.querySelectorAll('.graph-node');
+
+      edges.forEach(e => {
+        const match = (type === 'source' && e.getAttribute('data-source') === id) ||
+                      (type === 'crit' && e.getAttribute('data-field') === id);
+        e.classList.toggle('is-highlighted', match);
+        e.classList.toggle('is-dimmed', !match);
+      });
+
+      nodes.forEach(n => {
+        const isTarget = (type === 'source' && n.getAttribute('data-source-id') === id) ||
+                         (type === 'crit' && n.getAttribute('data-field') === id);
+        n.classList.toggle('is-highlighted', isTarget);
+        n.classList.toggle('is-dimmed', !isTarget);
+      });
+
+      renderGraphInspector(type, id);
+    }
+
+    function clearGraphSelection() {
+      selectedGraphNode = null;
+      document.querySelectorAll('.graph-edge').forEach(e => {
+        e.classList.remove('is-highlighted', 'is-dimmed');
+      });
+      document.querySelectorAll('.graph-node').forEach(n => {
+        n.classList.remove('is-highlighted', 'is-dimmed');
+      });
+      const inspector = document.getElementById('gap-inspector-container');
+      if (inspector) {
+        inspector.innerHTML = `
+          <div class="inspector-empty-state">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>Click any source node or checklist criterion in the graph above to inspect verbatim evidence, discrepancies, and cross-source corroboration.</span>
+          </div>
+        `;
+      }
+    }
+
+    function renderGraphInspector(type, id) {
+      const container = document.getElementById('gap-inspector-container');
+      if (!container || !R) return;
+
+      const sources = (R.sources || []).filter(s => s && s.id);
+      const checklist = R.checklist || [];
+      const findings = R.findings || [];
+      const gaps = R.gaps || [];
+      const conflicts = R.conflicts || [];
+
+      if (type === 'crit') {
+        const crit = checklist.find(c => c.field === id) || { field: id, label: id, importance: 'HIGH', why: '' };
+        const critGaps = gaps.filter(g => g.field === id);
+        const critConflicts = conflicts.filter(c => c.field === id);
+        const critFindings = findings.filter(f => f.field === id);
+        const hasGap = critGaps.length > 0;
+        const hasConflict = critConflicts.length > 0;
+
+        let statusBadge = '';
+        if (hasConflict) {
+          statusBadge = `<span class="cell-badge badge-conflict">DISPUTED (CONFLICT)</span>`;
+        } else if (hasGap) {
+          statusBadge = `<span class="cell-badge badge-miss">BLIND SPOT (GAP)</span>`;
+        } else {
+          statusBadge = `<span class="cell-badge badge-sourced">VERIFIED EVIDENCE</span>`;
+        }
+
+        let conflictHtml = '';
+        if (hasConflict) {
+          conflictHtml = critConflicts.map(c => {
+            const diff = computeWordDiff(c.a.quote || c.a.value || '', c.b.quote || c.b.value || '');
+            return `
+              <div style="background:#fff5f5; border:1px solid #fecaca; border-radius:8px; padding:12px; margin-bottom:12px;">
+                <div style="font-size:12px; font-weight:700; color:#b91c1c; margin-bottom:6px;">Direct Contradiction Assessment</div>
+                <div style="font-size:12px; color:var(--ink); margin-bottom:8px;">${esc(c.explanation || 'Sources contradict each other on this value.')}</div>
+                <div class="diff-box-grid" style="margin:0;">
+                  <div class="diff-card-source" style="cursor:pointer;" onclick="showSource('${c.a.source_id}', ${registerQuote(c.a.quote || c.a.value)})">
+                    <div class="diff-card-header">
+                      <span>${esc(c.a.source_title || c.a.source_id)}</span>
+                      <span class="diff-side-tag diff-tag-a">READ SOURCE A &rarr;</span>
+                    </div>
+                    <div>${diff.diffA}</div>
+                  </div>
+                  <div class="diff-card-source" style="cursor:pointer;" onclick="showSource('${c.b.source_id}', ${registerQuote(c.b.quote || c.b.value)})">
+                    <div class="diff-card-header">
+                      <span>${esc(c.b.source_title || c.b.source_id)}</span>
+                      <span class="diff-side-tag diff-tag-b">READ SOURCE B &rarr;</span>
+                    </div>
+                    <div>${diff.diffB}</div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        let gapHtml = '';
+        if (hasGap) {
+          gapHtml = `
+            <div style="background:#fef2f2; border:1px solid #fee2e2; border-radius:8px; padding:10px 14px; margin-bottom:12px;">
+              <b style="color:#b91c1c; font-size:12px;">⚠️ Potential Information Gap Detected:</b>
+              <div style="font-size:12px; color:var(--ink); margin-top:3px;">
+                ${esc(critGaps[0].why || crit.why || 'This critical decision requirement was not found in the documents analyzed.')}
+              </div>
+            </div>
+          `;
+        }
+
+        const sourceCards = sources.map(s => {
+          const f = critFindings.find(find => find.source_id === s.id);
+          const isSourced = f && f.status === 'sourced';
+          const boxClass = isSourced ? 'box-sourced' : (hasConflict ? 'box-conflict' : 'box-gap');
+          return `
+            <div class="inspector-source-box ${boxClass}">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <b style="font-size:12px; color:var(--ink);">${esc(s.title || s.id)}</b>
+                <span class="cell-badge ${isSourced ? 'badge-sourced' : (hasConflict ? 'badge-conflict' : 'badge-miss')}">
+                  ${isSourced ? 'SOURCED' : (hasConflict ? 'DISPUTED' : 'MISSING')}
+                </span>
+              </div>
+              ${isSourced ? `
+                <div style="font-size:12px; color:var(--ink); line-height:1.4; margin-bottom:6px; font-style:italic;">
+                  "${esc(f.quote || f.value || '')}"
+                </div>
+                <button type="button" class="button button-outline button-small" style="font-size:11px; padding:2px 8px;" onclick="showSource('${s.id}', ${registerQuote(f.quote || f.value)})">
+                  <span>Open in Source Reader</span> &rarr;
+                </button>
+              ` : `
+                <div style="font-size:11.5px; color:var(--muted);">No matching evidence found in this source.</div>
+              `}
+            </div>
+          `;
+        }).join('');
+
+        container.innerHTML = `
+          <div class="inspector-card">
+            <div class="inspector-header">
+              <div>
+                <h4 class="inspector-title">
+                  <span>${esc(crit.label)}</span>
+                  ${statusBadge}
+                  <span class="cell-badge" style="background:#eef2ff; color:#3730a3; font-size:10px;">${esc(crit.importance || 'HIGH')} PRIORITY</span>
+                </h4>
+                <div style="font-size:12px; color:var(--muted); margin-top:2px;">Checklist ID: <code>${esc(crit.field)}</code></div>
+              </div>
+              <button class="inspector-close-btn" onclick="clearGraphSelection()" title="Close Inspector">&times;</button>
+            </div>
+            ${gapHtml}
+            ${conflictHtml}
+            <div style="font-size:12px; font-weight:700; color:var(--ink); margin:8px 0 4px 0;">Source Corroboration Breakdown:</div>
+            <div class="inspector-grid">
+              ${sourceCards}
+            </div>
+          </div>
+        `;
+      } else if (type === 'source') {
+        const s = sources.find(src => src.id === id) || { id, title: id };
+        const cred = s.credibility || {};
+        const sourceTech = s.technical_audit || {};
+        const sourceFindings = findings.filter(f => f.source_id === id);
+        const sourcedCount = sourceFindings.filter(f => f.status === 'sourced').length;
+        const totalCriteria = checklist.length;
+
+        container.innerHTML = `
+          <div class="inspector-card">
+            <div class="inspector-header">
+              <div>
+                <h4 class="inspector-title">
+                  <span class="source-id-badge" style="font-size:11px;">${esc(s.id)}</span>
+                  <span>${esc(s.title || s.id)}</span>
+                  ${s.is_official ? '<span class="source-official-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Official</span>' : ''}
+                  <span class="cell-badge ${cred.badge_class || 'badge-med-trust'}">${cred.score || 50}% ${cred.badge_label || 'Trust'}</span>
+                </h4>
+                <div style="font-size:12px; color:var(--muted); margin-top:2px;">
+                  Origin: <b>${esc(cred.domain || (s.kind === 'pasted' ? 'Pasted Text' : 'Uploaded File'))}</b> &bull; Provides verified evidence for <b>${sourcedCount} of ${totalCriteria}</b> decision criteria.
+                </div>
+              </div>
+              <button class="inspector-close-btn" onclick="clearGraphSelection()" title="Close Inspector">&times;</button>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+              <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                ${sourceTech.is_https ? '<span class="source-tech-pill https-secure">HTTPS Secure</span>' : '<span class="source-tech-pill http-insecure">HTTP Insecure</span>'}
+                ${sourceTech.last_modified_human ? `<span class="source-tech-pill fresh">${esc(sourceTech.last_modified_human)}</span>` : ''}
+                ${sourceTech.is_stale ? '<span class="source-tech-pill stale">Stale Headers</span>' : ''}
+              </div>
+              <button type="button" class="button button-dark button-small" onclick="openInteractiveViewer('${s.id}', '')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                <span>Open Full Document in Source Reader</span> &rarr;
+              </button>
+            </div>
+            <div style="font-size:12px; font-weight:700; color:var(--ink); margin-bottom:8px;">Checklist Coverage from this Source:</div>
+            <div class="inspector-grid">
+              ${checklist.map(c => {
+                const f = sourceFindings.find(find => find.field === c.field);
+                const isSourced = f && f.status === 'sourced';
+                return `
+                  <div class="inspector-source-box ${isSourced ? 'box-sourced' : 'box-gap'}" style="cursor:pointer;" onclick="selectGraphNode('crit', '${c.field}')">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                      <b style="font-size:12px; color:var(--ink);">${esc(c.label)}</b>
+                      <span class="cell-badge ${isSourced ? 'badge-sourced' : 'badge-miss'}">${isSourced ? 'SOURCED' : 'GAP'}</span>
+                    </div>
+                    ${isSourced ? `<div style="font-size:11.5px; color:var(--muted); font-style:italic;">"${esc(f.quote || f.value || '')}"</div>` : `<div style="font-size:11px; color:var(--muted);">Missing from this source</div>`}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function renderKnowledgeGapGraph() {
+      const container = document.getElementById('graph-content');
+      if (!container || !R) return;
+
+      const usableSources = (R.sources || []).filter(s => s && s.id);
+      const checklist = R.checklist || [];
+      const findings = R.findings || [];
+      const gaps = R.gaps || [];
+      const conflicts = R.conflicts || [];
+      const st = R.stats || {};
+
+      const totalCrit = checklist.length;
+      const totalGaps = gaps.length;
+      const totalConflicts = conflicts.length;
+      const totalSourced = st.covered || 0;
+
+      // 1. Calculate Geometry for SVG
+      const rowHeight = 68;
+      const topMargin = 50;
+      const totalRows = Math.max(totalCrit, 3);
+      const svgHeight = Math.max(500, totalRows * rowHeight + topMargin + 30);
+      const svgWidth = 1000;
+
+      const srcPortX = 270;
+      const critPortX = 630;
+
+      const srcYMap = {};
+      const numSources = usableSources.length;
+      usableSources.forEach((s, idx) => {
+        if (numSources === 1) {
+          srcYMap[s.id] = svgHeight / 2;
+        } else {
+          srcYMap[s.id] = topMargin + 25 + idx * ((svgHeight - topMargin - 80) / Math.max(1, numSources - 1));
+        }
+      });
+
+      const critYMap = {};
+      const critStatusMap = {};
+      checklist.forEach((c, idx) => {
+        const cy = topMargin + idx * rowHeight + 26;
+        critYMap[c.field] = cy;
+
+        if (conflicts.some(cf => cf.field === c.field)) {
+          critStatusMap[c.field] = { status: 'conflict', label: 'DISPUTED', color: '#f97316', bg: '#fff7ed', border: '#ffedd5' };
+        } else if (gaps.some(g => g.field === c.field)) {
+          critStatusMap[c.field] = { status: 'gap', label: 'BLIND SPOT', color: '#ef4444', bg: '#fef2f2', border: '#fee2e2' };
+        } else {
+          const relevantFindings = findings.filter(f => f.field === c.field);
+          const sourcedCount = relevantFindings.filter(f => f.status === 'sourced').length;
+          if (sourcedCount >= numSources && numSources > 0) {
+            critStatusMap[c.field] = { status: 'sourced', label: 'VERIFIED', color: '#22c55e', bg: '#f0fdf4', border: '#bbf7d0' };
+          } else if (sourcedCount > 0) {
+            critStatusMap[c.field] = { status: 'partial', label: 'PARTIAL', color: '#f59e0b', bg: '#fffbeb', border: '#fef3c7' };
+          } else {
+            critStatusMap[c.field] = { status: 'gap', label: 'BLIND SPOT', color: '#ef4444', bg: '#fef2f2', border: '#fee2e2' };
+          }
+        }
+      });
+
+      // 2. Build Bezier Connecting Curves
+      let pathsSvg = '';
+      usableSources.forEach(s => {
+        const ySrc = srcYMap[s.id];
+        checklist.forEach(c => {
+          const yCrit = critYMap[c.field];
+          const isConf = conflicts.some(cf => cf.field === c.field && ((cf.a && cf.a.source_id === s.id) || (cf.b && cf.b.source_id === s.id)));
+          const f = findings.find(find => find.source_id === s.id && find.field === c.field);
+
+          let edgeType = 'gap';
+          if (isConf) edgeType = 'conflict';
+          else if (f && f.status === 'sourced') edgeType = 'sourced';
+          else if (f && f.status === 'uncertain') edgeType = 'uncertain';
+          else edgeType = 'gap';
+
+          const d = `M ${srcPortX} ${ySrc} C ${srcPortX + 160} ${ySrc}, ${critPortX - 160} ${yCrit}, ${critPortX} ${yCrit}`;
+          pathsSvg += `
+            <path class="graph-edge edge-${edgeType}" data-source="${esc(s.id)}" data-field="${esc(c.field)}" data-type="${edgeType}" d="${d}">
+              <title>${esc(s.id)} &rarr; ${esc(c.label)}: ${edgeType.toUpperCase()}</title>
+            </path>
+          `;
+        });
+      });
+
+      // 3. Build Source Nodes (Left Column)
+      let sourcesSvg = '';
+      usableSources.forEach(s => {
+        const cy = srcYMap[s.id];
+        const yTop = cy - 26;
+        const cred = s.credibility || {};
+        const titleShort = (s.title || s.id).slice(0, 24) + ((s.title || s.id).length > 24 ? '...' : '');
+        const domainShort = (cred.domain || (s.kind === 'pasted' ? 'Pasted Text' : 'Uploaded File')).slice(0, 22);
+        const trustPct = (cred.score || 50) + '%';
+        const offShield = s.is_official ? '★ Official' : trustPct;
+
+        sourcesSvg += `
+          <g class="graph-node graph-node-src" data-source-id="${esc(s.id)}" onclick="selectGraphNode('source', '${esc(s.id)}')" onmouseenter="hoverGraphNode('source', '${esc(s.id)}')" onmouseleave="clearGraphHover()">
+            <title>${esc(s.title || s.id)} (${esc(cred.domain || 'Source')}) - Click to inspect</title>
+            <rect class="graph-node-rect" x="30" y="${yTop}" width="240" height="52" rx="10" />
+            <rect x="30" y="${yTop}" width="5" height="52" rx="2" fill="${s.is_official ? '#15803d' : '#22c55e'}" />
+            <circle cx="50" cy="${cy}" r="11" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1.5" />
+            <text x="50" y="${cy + 4}" text-anchor="middle" font-size="9" font-weight="700" fill="#047857">${esc(s.id)}</text>
+            <text class="graph-node-text" x="68" y="${cy - 3}">${esc(titleShort)}</text>
+            <text class="graph-node-subtext" x="68" y="${cy + 13}">${esc(domainShort)} &bull; ${esc(offShield)}</text>
+            <circle cx="${srcPortX}" cy="${cy}" r="4.5" fill="#22c55e" stroke="#ffffff" stroke-width="2" />
+          </g>
+        `;
+      });
+
+      // 4. Build Criteria Nodes (Right Column)
+      let criteriaSvg = '';
+      checklist.forEach(c => {
+        const cy = critYMap[c.field];
+        const yTop = cy - 26;
+        const stat = critStatusMap[c.field] || { status: 'gap', label: 'BLIND SPOT', color: '#ef4444', bg: '#fef2f2', border: '#fee2e2' };
+        const labelShort = c.label.slice(0, 30) + (c.label.length > 30 ? '...' : '');
+
+        criteriaSvg += `
+          <g class="graph-node graph-node-crit" data-field="${esc(c.field)}" data-status="${stat.status}" data-label="${esc(c.label)}" onclick="selectGraphNode('crit', '${esc(c.field)}')" onmouseenter="hoverGraphNode('crit', '${esc(c.field)}')" onmouseleave="clearGraphHover()">
+            <title>${esc(c.label)} - Status: ${stat.label} - Click to inspect</title>
+            <rect class="graph-node-rect" x="630" y="${yTop}" width="340" height="52" rx="10" />
+            <rect x="630" y="${yTop}" width="5" height="52" rx="2" fill="${stat.color}" />
+            <circle cx="${critPortX}" cy="${cy}" r="4.5" fill="${stat.color}" stroke="#ffffff" stroke-width="2" />
+            <text class="graph-node-text" x="648" y="${cy - 3}">${esc(labelShort)}</text>
+            <text class="graph-node-subtext" x="648" y="${cy + 13}">Priority: ${esc(c.importance || 'HIGH')} &bull; Status: ${stat.label}</text>
+            <rect x="880" y="${cy - 10}" width="80" height="20" rx="10" fill="${stat.bg}" stroke="${stat.border}" stroke-width="1" />
+            <text x="920" y="${cy + 4}" text-anchor="middle" font-size="9" font-weight="700" fill="${stat.color}">${stat.label}</text>
+          </g>
+        `;
+      });
+
+      // 5. Assemble Full Graph HTML
+      container.innerHTML = `
+        <div class="gap-graph-container">
+          <div class="gap-graph-header">
+            <div>
+              <h3 class="gap-graph-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="18" r="3"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="6" y1="9" x2="6" y2="15"/><line x1="9" y1="18" x2="15" y2="18"/><line x1="18" y1="9" x2="18" y2="15"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/></svg>
+                <span>Interactive Knowledge Gap & Multi-Source Relationship Graph</span>
+              </h3>
+              <p class="gap-graph-subtitle">
+                Visual topological map of corroborated facts, information blind spots (gaps), and cross-source contradictions.
+              </p>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="cell-badge badge-sourced" style="font-size:11px;">${usableSources.length} Ingested Sources</span>
+              <span class="cell-badge" style="background:#eef2ff; color:#3730a3; font-size:11px;">${totalCrit} Decision Criteria</span>
+            </div>
+          </div>
+
+          <!-- Interactive Filters & Search Toolbar -->
+          <div class="gap-graph-toolbar">
+            <div class="gap-graph-filters">
+              <button type="button" class="graph-filter-pill is-active" id="graph-pill-all" onclick="setGraphFilter('all')">
+                <span>All Relationships (${totalCrit})</span>
+              </button>
+              <button type="button" class="graph-filter-pill" id="graph-pill-gaps" onclick="setGraphFilter('gaps')">
+                <span class="pill-dot" style="background:#ef4444;"></span>
+                <span>Blind Spots (${totalGaps})</span>
+              </button>
+              <button type="button" class="graph-filter-pill" id="graph-pill-conflicts" onclick="setGraphFilter('conflicts')">
+                <span class="pill-dot" style="background:#f97316;"></span>
+                <span>Contradictions (${totalConflicts})</span>
+              </button>
+              <button type="button" class="graph-filter-pill" id="graph-pill-sourced" onclick="setGraphFilter('sourced')">
+                <span class="pill-dot" style="background:#22c55e;"></span>
+                <span>Verified Facts (${totalSourced})</span>
+              </button>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="position:relative; width:220px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="position:absolute; left:9px; top:50%; transform:translateY(-50%); color:var(--muted);"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" placeholder="Filter criteria..." oninput="searchGraph(this.value)" style="width:100%; padding:5px 8px 5px 26px; font-size:12px; border-radius:100px; border:1px solid var(--line); background:var(--bg); color:var(--ink); outline:none;" />
+              </div>
+
+              <div class="gap-graph-legend">
+                <span class="graph-legend-item"><span class="legend-line line-sourced"></span> Verified</span>
+                <span class="graph-legend-item"><span class="legend-line line-gap"></span> Blind Spot (Gap)</span>
+                <span class="graph-legend-item"><span class="legend-line line-conflict"></span> Disputed</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scalable SVG Canvas -->
+          <div class="gap-graph-svg-wrap">
+            <svg class="gap-graph-svg" viewBox="0 0 ${svgWidth} ${svgHeight}" preserveAspectRatio="xMidYMid meet">
+              <!-- Column Labels -->
+              <text x="30" y="28" font-size="12" font-weight="700" fill="var(--muted)" letter-spacing="0.05em">INGESTED SOURCES</text>
+              <text x="630" y="28" font-size="12" font-weight="700" fill="var(--muted)" letter-spacing="0.05em">DECISION CHECKLIST CRITERIA</text>
+
+              <!-- Connecting Edges Layer -->
+              <g id="graph-edges-layer">
+                ${pathsSvg}
+              </g>
+
+              <!-- Nodes Layer -->
+              <g id="graph-sources-layer">
+                ${sourcesSvg}
+              </g>
+              <g id="graph-criteria-layer">
+                ${criteriaSvg}
+              </g>
+            </svg>
+          </div>
+
+          <!-- Docked Interactive Node Inspector -->
+          <div class="gap-inspector-container" id="gap-inspector-container">
+            <div class="inspector-empty-state">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+              <span>Click any source node or checklist criterion in the graph above to inspect verbatim evidence, discrepancies, and cross-source corroboration.</span>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     // SoniX Privacy Modal Handlers

@@ -414,6 +414,10 @@
         <button type="button" class="intel-tab is-active" id="tab-overview" onclick="switchIntelTab('overview')">
           <span>Overview & Summary</span>
         </button>
+        <button type="button" class="intel-tab" id="tab-graph" onclick="switchIntelTab('graph')">
+          <span>🕸️ Knowledge Gap Graph</span>
+          <span class="intel-tab-count" id="count-graph" style="background:#fef3c7; color:#92400e;">0</span>
+        </button>
         <button type="button" class="intel-tab" id="tab-matrix" onclick="switchIntelTab('matrix')">
           <span>Coverage Matrix</span>
         </button>
@@ -442,6 +446,10 @@
       <!-- Active Tab Panels -->
       <div id="intel-panel-overview" class="intel-panel" style="display: block; padding: 20px;">
         <div id="overview-content"></div>
+      </div>
+
+      <div id="intel-panel-graph" class="intel-panel" style="display: none; padding: 20px;">
+        <div id="graph-content"></div>
       </div>
 
       <div id="intel-panel-matrix" class="intel-panel" style="display: none;">
