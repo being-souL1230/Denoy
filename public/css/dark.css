@@ -1,0 +1,1437 @@
+/**
+ * dark.css: SoniX Luxury Dark Theme System
+ * Activated via data-theme="dark" attribute on the <html> root element.
+ * Provides high-contrast, eye-friendly, deeply cohesive dark emerald obsidian aesthetics.
+ * Ensures 100% of all cards, boxes, tables, toolbars, and texts are crystal-clear and readable.
+ */
+
+/* --------------------------------------------------------------------------
+   Root Color Variables & Base Reset for Dark Theme
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] {
+  --ink: #f0fdf4;
+  --color-ink: #f0fdf4;
+  --muted: #94a896;
+  --line: #223725;
+  --bg: #0b110c;
+  --sage: #7da57e;
+  --color-sage: #7da57e;
+  --mint: #172419;
+  --color-mint: #172419;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --blue: #38bdf8;
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] body {
+  background-color: #0b110c !important;
+  color: #e2ede0 !important;
+}
+
+html[data-theme="dark"] * {
+  scrollbar-color: #283e2c #0b110c;
+}
+
+html[data-theme="dark"] h1, 
+html[data-theme="dark"] h2, 
+html[data-theme="dark"] h3, 
+html[data-theme="dark"] h4, 
+html[data-theme="dark"] h5, 
+html[data-theme="dark"] h6 {
+  color: #f1f7ef !important;
+}
+
+html[data-theme="dark"] p, 
+html[data-theme="dark"] span:not(.pill-tag):not(.cell-badge):not(.completeness-badge):not(.h-badge):not(.preset-icon):not(.source-official-badge):not(.legend-chip):not(.reader-kw-date):not(.reader-kw-money):not(.reader-kw-eligibility):not(.reader-kw-doc):not(.reader-kw-trap):not(.diff-removed):not(.diff-added) {
+  color: inherit;
+}
+
+html[data-theme="dark"] input, 
+html[data-theme="dark"] textarea, 
+html[data-theme="dark"] [contenteditable="true"] {
+  caret-color: #4ade80 !important;
+}
+
+html[data-theme="dark"] ::selection {
+  background: #1b4b29 !important;
+  color: #f0fdf4 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Header & Navigation
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .site-header {
+  background: rgba(11, 17, 12, 0.92) !important;
+  border-bottom: 1px solid #1e3022 !important;
+  backdrop-filter: blur(14px);
+}
+
+html[data-theme="dark"] .brand {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .brand-period {
+  color: #4ade80 !important;
+}
+
+html[data-theme="dark"] .brand-link:hover .brand {
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .history-nav-btn {
+  background: #152218 !important;
+  border-color: #273d2a !important;
+  color: #d1e4cf !important;
+}
+
+html[data-theme="dark"] .history-nav-btn:hover {
+  background: #1d3021 !important;
+  border-color: #3b5a3f !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .text-button {
+  color: #92a993 !important;
+}
+
+html[data-theme="dark"] .text-button:hover {
+  color: #ecf5eb !important;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: #f0f5eb;
+  border: 1px solid #d4ded0;
+  color: #304431;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+.theme-toggle-btn:hover {
+  background: #e2ecd9;
+  border-color: #acc1a4;
+  color: #122114;
+  transform: translateY(-1px);
+}
+.theme-toggle-btn .sun-icon {
+  display: none;
+  color: #facc15;
+}
+.theme-toggle-btn .moon-icon {
+  display: block;
+  color: #456049;
+}
+html[data-theme="dark"] .theme-toggle-btn {
+  background: #162419 !important;
+  border-color: #29402c !important;
+  color: #d3e7d1 !important;
+}
+html[data-theme="dark"] .theme-toggle-btn:hover {
+  background: #203323 !important;
+  border-color: #416246 !important;
+  color: #ffffff !important;
+}
+html[data-theme="dark"] .theme-toggle-btn .sun-icon {
+  display: block !important;
+}
+html[data-theme="dark"] .theme-toggle-btn .moon-icon {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Hero Section
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .hero {
+  background: radial-gradient(circle at 75% 20%, rgba(34, 197, 94, 0.08) 0%, transparent 60%), #0b110c !important;
+  border-bottom: 1px solid #1a291d !important;
+}
+
+html[data-theme="dark"] .hero-title {
+  color: #f2f8f0 !important;
+}
+
+html[data-theme="dark"] .hero-subtitle {
+  color: #9cb59b !important;
+}
+
+html[data-theme="dark"] .eyebrow {
+  background: rgba(34, 197, 94, 0.12) !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .hero-stat-card {
+  background: #131e15 !important;
+  border-color: #243927 !important;
+}
+
+html[data-theme="dark"] .hero-stat-val {
+  color: #4ade80 !important;
+}
+
+html[data-theme="dark"] .hero-stat-label {
+  color: #9ab39a !important;
+}
+
+html[data-theme="dark"] .hero-reassurance {
+  color: #a4cca2 !important;
+}
+
+html[data-theme="dark"] .hero-reassurance svg {
+  stroke: #86efac !important;
+}
+
+/* --------------------------------------------------------------------------
+   Research Studio (Input & Investigation Workbench)
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] #studio .section-heading h2 {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] #studio .section-heading p {
+  color: #9cb59b !important;
+}
+
+html[data-theme="dark"] .studio-card {
+  background: #111a13 !important;
+  border: 1.5px solid #233726 !important;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.65) !important;
+}
+
+html[data-theme="dark"] .studio-card-header {
+  background: #0d150e !important;
+  border-bottom: 1px solid #203322 !important;
+}
+
+html[data-theme="dark"] .studio-card-title {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .studio-header-tag {
+  background: #18281b !important;
+  color: #86efac !important;
+  border-color: #29422d !important;
+}
+
+html[data-theme="dark"] .studio-card-body {
+  background: #111a13 !important;
+}
+
+html[data-theme="dark"] .studio-field-label {
+  color: #eef6ed !important;
+}
+
+html[data-theme="dark"] .studio-field-hint {
+  color: #8fa790 !important;
+}
+
+/* Command Search Capsule */
+html[data-theme="dark"] .studio-search-capsule {
+  background: #0c130d !important;
+  border: 2px solid #273f2a !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .studio-search-capsule:focus-within {
+  border-color: #4ade80 !important;
+  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.15) !important;
+  background: #0c130d !important;
+}
+
+html[data-theme="dark"] .capsule-radar-icon {
+  color: #4ade80 !important;
+}
+
+html[data-theme="dark"] .capsule-input {
+  color: #f0fdf4 !important;
+  background: transparent !important;
+}
+
+html[data-theme="dark"] .capsule-input::placeholder {
+  color: #58735a !important;
+}
+
+html[data-theme="dark"] .capsule-btn-tool {
+  background: #17261a !important;
+  border-color: #2a432e !important;
+  color: #a4cca2 !important;
+}
+
+html[data-theme="dark"] .capsule-btn-tool:hover {
+  background: #213725 !important;
+  color: #ffffff !important;
+  border-color: #436948 !important;
+}
+
+html[data-theme="dark"] .capsule-kbd {
+  background: #152217 !important;
+  border-color: #273e2a !important;
+  color: #8ca38d !important;
+}
+
+html[data-theme="dark"] .capsule-clear-btn {
+  color: #7b947c !important;
+}
+
+html[data-theme="dark"] .capsule-clear-btn:hover {
+  background: #2b1518 !important;
+  color: #fca5a5 !important;
+}
+
+/* 1-Click Interactive Test Scenarios */
+html[data-theme="dark"] .preset-chip-label {
+  color: #8da58e !important;
+}
+
+html[data-theme="dark"] .preset-pill {
+  background: #152217 !important;
+  border-color: #273e2a !important;
+  color: #d1e4cf !important;
+}
+
+html[data-theme="dark"] .preset-pill:hover {
+  background: #1e3122 !important;
+  border-color: #406245 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .preset-pill .preset-icon {
+  stroke: #86efac !important;
+}
+
+html[data-theme="dark"] .preset-pill:hover .preset-icon {
+  stroke: #4ade80 !important;
+}
+
+html[data-theme="dark"] .preset-pill .pill-tag {
+  background: rgba(74, 222, 128, 0.12) !important;
+  color: #86efac !important;
+}
+
+/* Source Comparison Deck */
+html[data-theme="dark"] .source-deck-card {
+  background: #0e160f !important;
+  border: 1.5px solid #233726 !important;
+}
+
+html[data-theme="dark"] .source-deck-tabs {
+  border-bottom-color: #1f3222 !important;
+}
+
+html[data-theme="dark"] .source-tab-btn {
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .source-tab-btn:hover {
+  color: #eef6ed !important;
+  background: #162419 !important;
+}
+
+html[data-theme="dark"] .source-tab-btn.is-active {
+  background: #1e4a2b !important;
+  color: #f0fdf4 !important;
+  border-color: #4ade80 !important;
+}
+
+html[data-theme="dark"] .source-counter-pill {
+  background: #18281b !important;
+  color: #a4cca2 !important;
+  border: 1px solid #2b452e !important;
+}
+
+/* Textarea for URLs and Pasted Document (Zero White Boxes) */
+html[data-theme="dark"] .source-textarea-enhanced,
+html[data-theme="dark"] textarea.source-textarea-enhanced {
+  background: #080d09 !important;
+  border: 1.5px solid #243927 !important;
+  color: #eef6ed !important;
+}
+
+html[data-theme="dark"] .source-textarea-enhanced:focus {
+  border-color: #4ade80 !important;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15) !important;
+  background: #080d09 !important;
+}
+
+html[data-theme="dark"] .source-toolbar-sub {
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .source-quick-btn {
+  background: #18281b !important;
+  border-color: #2b452e !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .source-quick-btn:hover {
+  background: #203624 !important;
+  border-color: #416746 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .source-metrics-tag {
+  color: #8fa790 !important;
+}
+
+/* File Dropzone */
+html[data-theme="dark"] .source-dropzone {
+  background: #0c140d !important;
+  border-color: #29402c !important;
+  color: #9ab39a !important;
+}
+
+html[data-theme="dark"] .source-dropzone.dragover,
+html[data-theme="dark"] .source-dropzone:hover {
+  background: #142216 !important;
+  border-color: #4ade80 !important;
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .dropzone-icon {
+  color: #4ade80 !important;
+}
+
+html[data-theme="dark"] .dropzone-title {
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .dropzone-subtitle {
+  color: #8fa790 !important;
+}
+
+/* Official Precedence Switch Card & Slider */
+html[data-theme="dark"] .official-precedence-card {
+  background: #132015 !important;
+  border: 1.5px solid #263d29 !important;
+}
+
+html[data-theme="dark"] .official-precedence-card:hover {
+  background: #192a1c !important;
+  border-color: #38563c !important;
+}
+
+html[data-theme="dark"] .precedence-title {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .precedence-badge {
+  background: #143521 !important;
+  border-color: #1e5832 !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .precedence-desc {
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .switch-slider {
+  background: #263c29 !important;
+}
+
+html[data-theme="dark"] .switch-slider:before {
+  background: #d4e7d2 !important;
+}
+
+html[data-theme="dark"] .switch-ui input:checked + .switch-slider {
+  background: #16a34a !important;
+}
+
+/* Heroic Analyze Action Button */
+html[data-theme="dark"] .studio-action-row-enhanced {
+  border-top-color: #1f3222 !important;
+}
+
+html[data-theme="dark"] .analyze-btn-heroic {
+  background: linear-gradient(135deg, #1b7a42 0%, #155e34 100%) !important;
+  border-color: #2e9f59 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 20px rgba(27, 122, 66, 0.35) !important;
+}
+
+html[data-theme="dark"] .studio-readiness-pill {
+  background: #162419 !important;
+  border-color: #283e2b !important;
+  color: #a4cca2 !important;
+}
+
+html[data-theme="dark"] .studio-readiness-pill.is-ready {
+  background: #143521 !important;
+  border-color: #22c55e !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .custom-file-btn {
+  background: #17271a !important;
+  border-color: #2a432e !important;
+  color: #cde2cc !important;
+}
+
+html[data-theme="dark"] .custom-file-btn:hover {
+  background: #203624 !important;
+  border-color: #416346 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .stepper-container {
+  background: #0d150e !important;
+  border-color: #213523 !important;
+}
+
+html[data-theme="dark"] .stepper-step {
+  background: #142016 !important;
+  border-color: #253928 !important;
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .stepper-step.active {
+  background: #1e4a2b !important;
+  border-color: #4ade80 !important;
+  color: #ecf5ea !important;
+}
+
+/* --------------------------------------------------------------------------
+   Research Output Intelligence Console (#results-container)
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .intel-console {
+  background: #111a13 !important;
+  border: 1.5px solid #233726 !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+html[data-theme="dark"] .console-header {
+  background: #0d150e !important;
+  border-bottom: 1px solid #213523 !important;
+}
+
+html[data-theme="dark"] .console-topic {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .console-disclaimer {
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .button.button-outline {
+  background: #152217 !important;
+  border-color: #283f2b !important;
+  color: #d0e3ce !important;
+}
+
+html[data-theme="dark"] .button.button-outline:hover {
+  background: #1e3221 !important;
+  border-color: #406344 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .intel-metrics-strip {
+  background: #0c130d !important;
+  border-bottom-color: #203422 !important;
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .intel-stat-item b {
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .intel-stat-item span {
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .intel-stat-divider {
+  background: #203322 !important;
+}
+
+/* Navigation Tabs */
+html[data-theme="dark"] .intel-nav-tabs {
+  background: #0f1710 !important;
+  border-bottom-color: #213523 !important;
+}
+
+html[data-theme="dark"] .intel-tab {
+  color: #8fa790 !important;
+  background: transparent !important;
+}
+
+html[data-theme="dark"] .intel-tab:hover {
+  color: #f0fdf4 !important;
+  background: #162419 !important;
+}
+
+html[data-theme="dark"] .intel-tab.is-active {
+  color: #f0fdf4 !important;
+  background: #1e4a2b !important;
+  border-color: #4ade80 !important;
+}
+
+html[data-theme="dark"] .intel-tab-count {
+  background: #1a2a1c !important;
+  color: #a4cca2 !important;
+}
+
+html[data-theme="dark"] .intel-tab-count.has-discrepancies {
+  background: #39181b !important;
+  color: #fca5a5 !important;
+}
+
+/* Active Tab Panels & Overview */
+html[data-theme="dark"] .intel-panel {
+  background: #111a13 !important;
+}
+
+html[data-theme="dark"] .completeness-banner {
+  background: #142116 !important;
+  border-color: #263d29 !important;
+}
+
+html[data-theme="dark"] .completeness-badge.status-incomplete {
+  background: #3a1518 !important;
+  color: #fca5a5 !important;
+  border: 1px solid #63252a !important;
+  box-shadow: 0 1px 4px rgba(58, 21, 24, 0.4) !important;
+}
+
+html[data-theme="dark"] .completeness-badge.status-complete {
+  background: #143820 !important;
+  color: #86efac !important;
+  border: 1px solid #1f5731 !important;
+  box-shadow: 0 1px 4px rgba(20, 56, 32, 0.4) !important;
+}
+
+html[data-theme="dark"] .completeness-banner div[style*="background:#e8ece5"] {
+  background: #233726 !important;
+}
+
+html[data-theme="dark"] .overview-grid {
+  background: transparent !important;
+}
+
+html[data-theme="dark"] .overview-card {
+  background: #142116 !important;
+  border-color: #263d29 !important;
+}
+
+html[data-theme="dark"] .overview-card-header {
+  border-bottom-color: #223725 !important;
+}
+
+html[data-theme="dark"] .overview-card-title {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .overview-item {
+  border-bottom-color: #1f3221 !important;
+  color: #e5ede3 !important;
+}
+
+html[data-theme="dark"] .gap-item-status {
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .all-clear-notice {
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .matrix-overview-cta {
+  background: #142116 !important;
+  border-color: #263d29 !important;
+}
+
+html[data-theme="dark"] .matrix-overview-cta-title {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .matrix-overview-cta-desc {
+  color: #8fa790 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Technical & Server Header Freshness Banner (Dark Obsidian Alert)
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .tech-audit-banner {
+  background: linear-gradient(135deg, #1f1416 0%, #180f11 100%) !important;
+  border: 1.5px solid #5c2024 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .tech-banner-title {
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .tech-banner-pill {
+  background: #3d161a !important;
+  border-color: #6a242a !important;
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .tech-alert-item {
+  background: #141f16 !important;
+  color: #dceada !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+}
+
+html[data-theme="dark"] .tech-alert-item.stale-alert {
+  border-color: #5c2024 !important;
+  border-left: 4px solid #ef4444 !important;
+}
+
+html[data-theme="dark"] .tech-alert-item.lowtrust-alert {
+  border-color: #5c381c !important;
+  border-left: 4px solid #f97316 !important;
+}
+
+html[data-theme="dark"] .tech-alert-text b {
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .tech-alert-text span {
+  color: #fecaca !important;
+}
+
+html[data-theme="dark"] .tech-alert-sub {
+  color: #f87171 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Deterministic Source Authority & Web Security Console
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .authority-audit-container {
+  background: #131e15 !important;
+  border-color: #253a27 !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .authority-audit-header {
+  border-bottom-color: #213523 !important;
+}
+
+html[data-theme="dark"] .authority-header-eyebrow {
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .authority-header-title {
+  color: #f2f8f0 !important;
+}
+
+html[data-theme="dark"] .authority-header-desc {
+  color: #9cb59b !important;
+}
+
+html[data-theme="dark"] .security-chip {
+  background: #172719 !important;
+  border-color: #2c4630 !important;
+  color: #a4caa2 !important;
+}
+
+html[data-theme="dark"] .source-authority-card {
+  background: #162418 !important;
+  border-color: #283f2b !important;
+}
+
+html[data-theme="dark"] .source-authority-card:hover {
+  background: #1b2c1e !important;
+  border-color: #3d5e41 !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45) !important;
+}
+
+html[data-theme="dark"] .source-id-badge {
+  background: #214327 !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .source-card-title {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .source-official-badge {
+  background: #143521 !important;
+  border-color: #1d5733 !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .source-origin-row {
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .stale-warning-banner {
+  background: #2b1518 !important;
+  border-color: #5d2126 !important;
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .source-audit-flags {
+  background: #0f1911 !important;
+  border-color: #223725 !important;
+}
+
+html[data-theme="dark"] .source-flag-line {
+  color: #a1b8a1 !important;
+}
+
+html[data-theme="dark"] .source-open-reader-btn {
+  background: #18281b !important;
+  border-color: #2c4630 !important;
+  color: #cfe2ce !important;
+}
+
+html[data-theme="dark"] .source-open-reader-btn:hover {
+  background: #213725 !important;
+  border-color: #436948 !important;
+  color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   Trap Warning & Fine Print Radar (Subtle Dark Mode)
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .trap-warning-box {
+  background: #161e17 !important;
+  border-color: #2b3e2d !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme="dark"] .trap-warning-title {
+  color: #e6ede4 !important;
+}
+
+html[data-theme="dark"] .trap-warning-icon {
+  background: #3c181b !important;
+  color: #f87171 !important;
+}
+
+html[data-theme="dark"] .trap-radar-pill {
+  background: #1d2c1f !important;
+  color: #a4cca2 !important;
+  border-color: #314a34 !important;
+}
+
+html[data-theme="dark"] .trap-clause-item {
+  background: #111812 !important;
+  border-color: #243626 !important;
+}
+
+html[data-theme="dark"] .trap-clause-item:hover {
+  background: #162118 !important;
+  border-color: #3a573d !important;
+}
+
+html[data-theme="dark"] .trap-clause-cat {
+  background: #28191c !important;
+  color: #fca5a5 !important;
+  border: 1px solid #4a2428 !important;
+}
+
+html[data-theme="dark"] .trap-clause-quote {
+  background: #0c120d !important;
+  border-color: #1e2e20 !important;
+  color: #e0ece0 !important;
+}
+
+html[data-theme="dark"] .trap-action-tip {
+  background: #131b14 !important;
+  border-color: #263c28 !important;
+  color: #a4cca2 !important;
+}
+
+html[data-theme="dark"] .trap-view-link {
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .trap-clause-item:hover .trap-view-link {
+  color: #bbf7d0 !important;
+}
+
+html[data-theme="dark"] mark.trap-mark {
+  background: #451b1f !important;
+  color: #fca5a5 !important;
+  border-bottom: 2px solid #ef4444 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Coverage Matrix Table & Filtering
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .matrix-filter-bar {
+  background: #0e160f !important;
+  border-color: #223624 !important;
+}
+
+html[data-theme="dark"] .matrix-search-input {
+  background: #131e15 !important;
+  border-color: #253927 !important;
+  color: #eef6ed !important;
+}
+
+html[data-theme="dark"] .matrix-search-input:focus {
+  border-color: #4ade80 !important;
+}
+
+html[data-theme="dark"] .matrix-filter-pill {
+  background: #152217 !important;
+  border-color: #273e2a !important;
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .matrix-filter-pill.is-active {
+  background: #1e4a2b !important;
+  border-color: #4ade80 !important;
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .matrix-wrap {
+  background: #0d140e !important;
+  border-color: #223624 !important;
+}
+
+html[data-theme="dark"] .matrix-table th {
+  background: #141e15 !important;
+  color: #e5ede3 !important;
+  border-bottom: 1px solid #243826 !important;
+}
+
+html[data-theme="dark"] .matrix-table td {
+  border-bottom: 1px solid #1e2f20 !important;
+  color: #cfe0cd !important;
+  background: #0d140e !important;
+}
+
+html[data-theme="dark"] .matrix-table tr:hover td {
+  background: #152317 !important;
+}
+
+html[data-theme="dark"] .matrix-field-cell {
+  color: #f0fdf4 !important;
+}
+
+/* Interactive Finding Cells in Matrix */
+html[data-theme="dark"] .cell-hit {
+  background: #142a1b !important;
+  border-color: #21512f !important;
+}
+
+html[data-theme="dark"] .cell-hit:hover {
+  background: #1b3824 !important;
+  border-color: #327545 !important;
+}
+
+html[data-theme="dark"] .cell-hit b {
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .cell-hit span {
+  color: #a3c9a6 !important;
+}
+
+html[data-theme="dark"] .cell-miss {
+  background: #231416 !important;
+  border-color: #4d2025 !important;
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .cell-uncertain {
+  background: #241c10 !important;
+  border-color: #4f3b17 !important;
+  color: #fde047 !important;
+}
+
+/* Badges */
+html[data-theme="dark"] .badge-sourced {
+  background: #143820 !important;
+  color: #86efac !important;
+  border: 1px solid #1f5731 !important;
+}
+
+html[data-theme="dark"] .badge-miss {
+  background: #39280f !important;
+  color: #fcd34d !important;
+  border: 1px solid #5d4213 !important;
+}
+
+html[data-theme="dark"] .badge-conflict {
+  background: #3a1518 !important;
+  color: #fca5a5 !important;
+  border: 1px solid #5d2024 !important;
+}
+
+html[data-theme="dark"] .badge-trap {
+  background: #3c1418 !important;
+  color: #fca5a5 !important;
+  border: 1px solid #5e2025 !important;
+}
+
+html[data-theme="dark"] .badge-tech-alert {
+  background: #3d1419 !important;
+  color: #fca5a5 !important;
+  border: 1px solid #632228 !important;
+}
+
+html[data-theme="dark"] .badge-uncertain {
+  background: #392413 !important;
+  color: #fdba74 !important;
+  border: 1px solid #5c371b !important;
+}
+
+html[data-theme="dark"] .badge-low-trust {
+  background: #381c15 !important;
+  border-color: #5a2c22 !important;
+  color: #fdba74 !important;
+}
+
+html[data-theme="dark"] .badge-med-trust {
+  background: #342813 !important;
+  border-color: #55411f !important;
+  color: #fde047 !important;
+}
+
+html[data-theme="dark"] .badge-high-trust {
+  background: #143820 !important;
+  border-color: #1f5731 !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .source-tech-pill.https-secure {
+  background: #12371f !important;
+  border-color: #1e5832 !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .source-tech-pill.http-insecure {
+  background: #392911 !important;
+  border-color: #5c4114 !important;
+  color: #fcd34d !important;
+}
+
+html[data-theme="dark"] .source-tech-pill.stale {
+  background: #3a1619 !important;
+  border-color: #5e2125 !important;
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .source-tech-pill.fresh {
+  background: #12371f !important;
+  border-color: #1e5832 !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .source-tech-pill.low-trust {
+  background: #381c15 !important;
+  border-color: #5a2c22 !important;
+  color: #fdba74 !important;
+}
+
+html[data-theme="dark"] .source-tech-pill.gov-trust {
+  background: #12371f !important;
+  border-color: #1e5832 !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .source-tech-pill.server-identity {
+  background: #17261a !important;
+  color: #a4cca2 !important;
+  border: 1px solid #2b442e !important;
+}
+
+/* --------------------------------------------------------------------------
+   Dense Tables (Gaps, Contradictions, Outdated, Checklist)
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .dense-table {
+  background: #0e160f !important;
+}
+
+html[data-theme="dark"] .dense-table th {
+  background: #131e15 !important;
+  color: #8fa790 !important;
+  border-bottom: 1px solid #213523 !important;
+}
+
+html[data-theme="dark"] .dense-table td {
+  background: #0e160f !important;
+  color: #cfe0cd !important;
+  border-bottom: 1px solid #1e3021 !important;
+}
+
+html[data-theme="dark"] .dense-table tr:hover td {
+  background: #162419 !important;
+}
+
+/* Checklist Toolbar & Progress */
+html[data-theme="dark"] .checklist-toolbar {
+  background: #131e15 !important;
+  border: 1px solid #243827 !important;
+}
+
+html[data-theme="dark"] .checklist-progress-label {
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .checklist-progress-bar {
+  background: #223725 !important;
+}
+
+html[data-theme="dark"] .checklist-progress-fill {
+  background: #4ade80 !important;
+}
+
+html[data-theme="dark"] .checklist-progress-text {
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] tr.is-done {
+  background: #111a12 !important;
+}
+
+html[data-theme="dark"] .checklist-field {
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .checklist-action {
+  color: #94a896 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Contradictions, Word Diffs & Assessment
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .conflict-toolbar {
+  background: #131e15 !important;
+  border-bottom: 1px solid #223725 !important;
+}
+
+html[data-theme="dark"] .diff-card-source {
+  background: #131e15 !important;
+  border: 1px solid #243827 !important;
+  color: #cfe0cd !important;
+}
+
+html[data-theme="dark"] .diff-card-source:hover {
+  border-color: #3d5e41 !important;
+  background: #18281b !important;
+}
+
+html[data-theme="dark"] .diff-card-header {
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .diff-side-tag.diff-tag-a {
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .diff-side-tag.diff-tag-b {
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .diff-removed {
+  background: #3b181b !important;
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .diff-added {
+  background: #15381f !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .diff-toggle-btn {
+  background: #162419 !important;
+  border-color: #283f2b !important;
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .diff-toggle-btn.is-active {
+  background: #1e4a2b !important;
+  border-color: #4ade80 !important;
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .conflict-assessment-box {
+  background: #101912 !important;
+  border: 1px solid #223725 !important;
+  color: #a4cca2 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Critical Entities & Direct Discrepancies
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .entities-deck-grid {
+  background: transparent !important;
+}
+
+html[data-theme="dark"] .entity-source-column {
+  background: #111a13 !important;
+  border: 1px solid #233726 !important;
+}
+
+html[data-theme="dark"] .entity-source-header {
+  border-bottom: 1px solid #223725 !important;
+}
+
+html[data-theme="dark"] .entity-group-title {
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .entity-item-card {
+  background: #0c130d !important;
+  border: 1px solid #213523 !important;
+}
+
+html[data-theme="dark"] .entity-item-card:hover {
+  background: #152217 !important;
+  border-color: #4ade80 !important;
+}
+
+html[data-theme="dark"] .entity-value-highlight {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .entity-snippet-sub {
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .discrepancy-banner {
+  background: #201315 !important;
+  border: 1px solid #552025 !important;
+}
+
+html[data-theme="dark"] .discrepancy-title {
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .discrepancy-desc {
+  color: #fecaca !important;
+}
+
+html[data-theme="dark"] .discrepancy-card {
+  background: #141c15 !important;
+  border: 1px solid #3b2527 !important;
+  color: #dceada !important;
+}
+
+html[data-theme="dark"] .discrepancy-cat {
+  color: #fca5a5 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Source Reader Drawer & Fluorescent Highlighting
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .intel-viewer-drawer {
+  background: #0c130d !important;
+  border-top: 2px solid #223725 !important;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .drawer-close-btn:hover {
+  background: #18281b !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"] .viewer-toolbar {
+  background: #111a12 !important;
+  border: 1px solid #223725 !important;
+}
+
+html[data-theme="dark"] .viewer-toolbar-label {
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .legend-chip-target {
+  background: #39280f !important;
+  color: #fef08a !important;
+  border-color: #5d4213 !important;
+}
+
+html[data-theme="dark"] .legend-chip-date {
+  background: #0c2d48 !important;
+  color: #7dd3fc !important;
+  border-color: #075985 !important;
+}
+
+html[data-theme="dark"] .legend-chip-money {
+  background: #3b290c !important;
+  color: #fde047 !important;
+  border-color: #78350f !important;
+}
+
+html[data-theme="dark"] .legend-chip-eligibility {
+  background: #2e1a47 !important;
+  color: #c4b5fd !important;
+  border-color: #5b21b6 !important;
+}
+
+html[data-theme="dark"] .legend-chip-doc {
+  background: #0f351e !important;
+  color: #86efac !important;
+  border-color: #166534 !important;
+}
+
+html[data-theme="dark"] .legend-chip-trap {
+  background: #3d1419 !important;
+  color: #fca5a5 !important;
+  border-color: #632228 !important;
+}
+
+html[data-theme="dark"] .viewer-search-wrap input {
+  background: #080d09 !important;
+  border: 1px solid #243827 !important;
+  color: #f0fdf4 !important;
+}
+
+html[data-theme="dark"] .viewer-search-wrap input:focus {
+  border-color: #4ade80 !important;
+}
+
+html[data-theme="dark"] .viewer-nav-status {
+  background: #193822 !important;
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .viewer-search-count {
+  background: #1e293b !important;
+  color: #93c5fd !important;
+}
+
+/* Master Reader Preformatted Container */
+html[data-theme="dark"] .drawer-source-pre {
+  background: #080d09 !important;
+  border: 1px solid #1e3022 !important;
+  color: #dbe8da !important;
+}
+
+/* Critical Keywords in Document Body (Dark High-Contrast Badges) */
+html[data-theme="dark"] .reader-kw-date {
+  background: #0c2d48 !important;
+  color: #7dd3fc !important;
+  border: 1px solid #075985 !important;
+}
+
+html[data-theme="dark"] .reader-kw-money {
+  background: #3b290c !important;
+  color: #fde047 !important;
+  border: 1px solid #78350f !important;
+}
+
+html[data-theme="dark"] .reader-kw-eligibility {
+  background: #2e1a47 !important;
+  color: #c4b5fd !important;
+  border: 1px solid #5b21b6 !important;
+}
+
+html[data-theme="dark"] .reader-kw-doc {
+  background: #0f351e !important;
+  color: #86efac !important;
+  border: 1px solid #166534 !important;
+}
+
+html[data-theme="dark"] .reader-kw-trap {
+  background: #3d1419 !important;
+  color: #fca5a5 !important;
+  border-bottom: 2px solid #ef4444 !important;
+}
+
+html[data-theme="dark"] .drawer-target-highlight {
+  background: #47320c !important;
+  background-image: linear-gradient(120deg, rgba(71, 50, 12, 0.95) 0%, rgba(94, 66, 15, 0.98) 100%) !important;
+  color: #fef08a !important;
+  border: 1px solid #ca8a04 !important;
+  box-shadow: 0 0 0 3px rgba(202, 138, 4, 0.45) !important;
+}
+
+html[data-theme="dark"] .target-marker-badge {
+  background: #fef08a !important;
+  color: #713f12 !important;
+}
+
+/* --------------------------------------------------------------------------
+   History Drawer & Modals
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .history-drawer {
+  background: #0f1610 !important;
+  border-right-color: #233725 !important;
+}
+
+html[data-theme="dark"] .history-drawer-header {
+  background: #131e14 !important;
+  border-bottom-color: #233725 !important;
+}
+
+html[data-theme="dark"] .history-drawer-title {
+  color: #f1f8ee !important;
+}
+
+html[data-theme="dark"] .history-drawer-subheader {
+  background: #111a12 !important;
+  border-bottom-color: #1e3021 !important;
+  color: #8fa790 !important;
+}
+
+html[data-theme="dark"] .history-card {
+  background: #142116 !important;
+  border-color: #263e29 !important;
+}
+
+html[data-theme="dark"] .history-card:hover {
+  background: #1a2c1d !important;
+  border-color: #3d5e41 !important;
+}
+
+html[data-theme="dark"] .history-card-topic {
+  color: #ecf5ea !important;
+}
+
+html[data-theme="dark"] .history-card-date {
+  color: #7b947c !important;
+}
+
+html[data-theme="dark"] .history-restore-link {
+  color: #86efac !important;
+}
+
+html[data-theme="dark"] .h-badge {
+  background: #1a2a1d !important;
+  color: #a4cca2 !important;
+}
+
+html[data-theme="dark"] .h-badge-gap {
+  background: #39280f !important;
+  color: #fcd34d !important;
+}
+
+html[data-theme="dark"] .h-badge-conflict {
+  background: #3a1518 !important;
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .history-drawer-footer {
+  background: #131e14 !important;
+  border-top-color: #233725 !important;
+}
+
+html[data-theme="dark"] .history-clear-btn {
+  border-color: #3c2626 !important;
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"] .history-clear-btn:hover {
+  background: #3b181b !important;
+  border-color: #63252a !important;
+}
+
+html[data-theme="dark"] .history-backdrop {
+  background: rgba(4, 7, 5, 0.75) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] .site-footer {
+  background: #090e0a !important;
+  border-top-color: #1c2b1e !important;
+  color: #7c947d !important;
+}
+
+html[data-theme="dark"] .footer-note {
+  color: #7c947d !important;
+}

@@ -96,7 +96,7 @@ def _call_groq(prompt: str, system: str = "", as_json: bool = True) -> str:
         headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {GROQ_API_KEY}",
-            "User-Agent": "DigitalDarkSpot/1.0",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
         },
         method="POST"
     )
@@ -117,10 +117,23 @@ def _call_groq(prompt: str, system: str = "", as_json: bool = True) -> str:
             except Exception:
                 pass
 
-            # Handle rate-limit (HTTP 429) on Groq free tier
+            # Handle rate-limit (HTTP 429) on Groq free tier with smart dynamic backoff
             if e.code == 429 and attempt < max_attempts - 1:
-                wait_sec = 2 * (attempt + 1)
-                print(f"[Groq Free Tier] Rate limit (429) hit. Pausing {wait_sec}s before retry...")
+                wait_sec = 2.0 * (attempt + 1)
+                retry_header = getattr(e, "headers", None) and e.headers.get("Retry-After")
+                if retry_header:
+                    try:
+                        wait_sec = min(float(retry_header) + 0.5, 25.0)
+                    except (ValueError, TypeError):
+                        pass
+                elif "try again in " in error_body:
+                    m = re.search(r"try again in (\d+(?:\.\d+)?)s", error_body)
+                    if m:
+                        try:
+                            wait_sec = min(float(m.group(1)) + 0.5, 25.0)
+                        except (ValueError, TypeError):
+                            pass
+                print(f"[Groq Free Tier] Rate limit (429) hit. Pausing {wait_sec:.1f}s before retry...")
                 time.sleep(wait_sec)
                 continue
             

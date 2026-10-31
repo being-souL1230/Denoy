@@ -41,9 +41,20 @@ Return JSON only in this format:
 </source_data>"""
 
 
+MAX_EXTRACTION_CHARS = 10000
+
+
 def extract_from_source(source: dict, fields: list) -> dict:
-    """Extract answers and verbatim quotes from one source for all fields."""
+    """Extract answers and verbatim quotes from one source for all fields.
+    
+    Uses a smart context window capped at ~10,000 characters (~2,500 tokens).
+    This strictly prevents exceeding Groq's 8,000 TPM rate limit while keeping
+    the full document intact in source["text"] for interactive reading and deterministic checks.
+    """
     slim = [{"key": f["key"], "label": f["label"]} for f in fields]
-    prompt = EXTRACT_PROMPT.format(fields_json=json.dumps(slim, ensure_ascii=False), text=source["text"])
+    raw_text = source.get("text", "")
+    extraction_text = raw_text[:MAX_EXTRACTION_CHARS] if len(raw_text) > MAX_EXTRACTION_CHARS else raw_text
+
+    prompt = EXTRACT_PROMPT.format(fields_json=json.dumps(slim, ensure_ascii=False), text=extraction_text)
     data = call_llm_json(prompt) or {}
     return data.get("results", {})

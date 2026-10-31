@@ -8,6 +8,7 @@
  * 4. viewer.css    - Interactive source reader drawer & in-text highlighter
  * 5. history.css   - Local snapshot history drawer and cards
  * 6. print.css     - Custom inspection dossier PDF & print media layout
+ * 7. dark.css      - SoniX luxury dark mode overrides and theme tokens
  */
 
 @import url("variables.css");
@@ -16,3 +17,4 @@
 @import url("viewer.css");
 @import url("history.css");
 @import url("print.css");
+@import url("dark.css");

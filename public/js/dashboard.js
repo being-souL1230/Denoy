@@ -635,14 +635,14 @@
         <div class="intel-stat-divider"></div>
         <div class="intel-stat-item"><span class="cell-badge badge-miss" style="margin:0 4px 0 0;">GAPS</span> <b>${st.gaps}</b></div>
         <div class="intel-stat-divider"></div>
-        <div class="intel-stat-item"><span class="cell-badge" style="background:#faeaeb; color:#82202b; margin:0 4px 0 0;">CONFLICTS</span> <b>${st.conflicts}</b></div>
+        <div class="intel-stat-item"><span class="cell-badge badge-conflict" style="margin:0 4px 0 0;">CONFLICTS</span> <b>${st.conflicts}</b></div>
         <div class="intel-stat-divider"></div>
         <div class="intel-stat-item"><span class="cell-badge badge-uncertain" style="margin:0 4px 0 0;">OUTDATED</span> <b>${st.outdated}</b></div>
         <div class="intel-stat-divider"></div>
-        <div class="intel-stat-item"><span class="cell-badge" style="background:#fff1f2; color:#b91c1c; margin:0 4px 0 0;">TRAPS</span> <b>${st.trap_clauses_detected || 0}</b></div>
+        <div class="intel-stat-item"><span class="cell-badge badge-trap" style="margin:0 4px 0 0;">TRAPS</span> <b>${st.trap_clauses_detected || 0}</b></div>
         ${((st.stale_headers_detected || 0) + (st.low_trust_domains_detected || 0)) > 0 ? `
           <div class="intel-stat-divider"></div>
-          <div class="intel-stat-item"><span class="cell-badge" style="background:#fee2e2; color:#991b1b; margin:0 4px 0 0;">TECH ALERTS</span> <b>${(st.stale_headers_detected || 0) + (st.low_trust_domains_detected || 0)}</b></div>
+          <div class="intel-stat-item"><span class="cell-badge badge-tech-alert" style="margin:0 4px 0 0;">TECH ALERTS</span> <b>${(st.stale_headers_detected || 0) + (st.low_trust_domains_detected || 0)}</b></div>
         ` : ''}
       `;
 
@@ -658,8 +658,7 @@
       const countEntitiesEl = document.getElementById('count-entities');
       if (countEntitiesEl) {
         countEntitiesEl.textContent = entityDiscrepancies > 0 ? `${entityDiscrepancies} Alerts` : `${entityTotalSources} Sources`;
-        countEntitiesEl.style.background = entityDiscrepancies > 0 ? '#faeaeb' : '#e0f2fe';
-        countEntitiesEl.style.color = entityDiscrepancies > 0 ? '#982820' : '#0369a1';
+        countEntitiesEl.className = entityDiscrepancies > 0 ? 'intel-tab-count has-discrepancies' : 'intel-tab-count';
       }
 
       // 3. Panel 0: Executive Overview & Completeness
@@ -674,11 +673,11 @@
       // Card 1: Potential Information Gaps
       let gapsOverviewHtml = '';
       if (!R.gaps || !R.gaps.length) {
-        gapsOverviewHtml = `<div style="color:#1e5a2c; font-size:12.5px; padding:6px 0;">All expected decision criteria were covered in the sources reviewed.</div>`;
+        gapsOverviewHtml = `<div class="all-clear-notice">All expected decision criteria were covered in the sources reviewed.</div>`;
       } else {
         gapsOverviewHtml = R.gaps.slice(0, 4).map(g => `
           <div class="overview-item">
-            <div><b style="color:var(--ink);">${esc(g.label)}</b>: <span style="color:#8c2e26; font-size:11.5px; font-weight:600;">Not found in sources reviewed</span></div>
+            <div><b style="color:var(--ink);">${esc(g.label)}</b>: <span class="gap-item-status" style="font-size:11.5px; font-weight:600;">Not found in sources reviewed</span></div>
             <div style="font-size:11.5px; color:var(--muted); margin-top:2px;">Why it matters: ${esc(g.why || 'Critical decision requirement.')}</div>
           </div>
         `).join('');
@@ -690,7 +689,7 @@
       // Card 2: Conflicting Information (with Side-by-Side Word Diff)
       let conflictsOverviewHtml = '';
       if (!R.conflicts || !R.conflicts.length) {
-        conflictsOverviewHtml = `<div style="color:#1e5a2c; font-size:12.5px; padding:6px 0;">No contradictory claims detected between sources.</div>`;
+        conflictsOverviewHtml = `<div class="all-clear-notice">No contradictory claims detected between sources.</div>`;
       } else {
         conflictsOverviewHtml = R.conflicts.slice(0, 3).map((c, idx) => {
           const diff = computeWordDiff(c.a.quote || c.a.value || '', c.b.quote || c.b.value || '');
@@ -700,20 +699,20 @@
             <div class="overview-item">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <b style="color:var(--ink); font-size:13px;">${esc(c.label)}</b>
-                <span class="cell-badge" style="background:#faeaeb; color:#82202b;">CONFLICT</span>
+                <span class="cell-badge badge-conflict">CONFLICT</span>
               </div>
               <div class="diff-box-grid" style="margin:4px 0 6px 0;">
                 <div class="diff-card-source" style="cursor:pointer;" onclick="showSource('${c.a.source_id}', ${registerQuote(c.a.quote || c.a.value)})" title="Click to view highlighted in source document">
                   <div class="diff-card-header">
                     <span>${aTitle}</span>
-                    <span style="font-size:9.5px; color:#982820; font-weight:700;">SOURCE A • READ &rarr;</span>
+                    <span class="diff-side-tag diff-tag-a" style="font-size:9.5px; font-weight:700;">SOURCE A • READ &rarr;</span>
                   </div>
                   <div>${diff.diffA}</div>
                 </div>
                 <div class="diff-card-source" style="cursor:pointer;" onclick="showSource('${c.b.source_id}', ${registerQuote(c.b.quote || c.b.value)})" title="Click to view highlighted in source document">
                   <div class="diff-card-header">
                     <span>${bTitle}</span>
-                    <span style="font-size:9.5px; color:#1b6338; font-weight:700;">SOURCE B • READ &rarr;</span>
+                    <span class="diff-side-tag diff-tag-b" style="font-size:9.5px; font-weight:700;">SOURCE B • READ &rarr;</span>
                   </div>
                   <div>${diff.diffB}</div>
                 </div>
@@ -728,7 +727,7 @@
       // Card 3: Potentially Outdated
       let outdatedOverviewHtml = '';
       if (!R.outdated || !R.outdated.length) {
-        outdatedOverviewHtml = `<div style="color:#1e5a2c; font-size:12.5px; padding:6px 0;">All reviewed sources and calendar dates appear current.</div>`;
+        outdatedOverviewHtml = `<div class="all-clear-notice">All reviewed sources and calendar dates appear current.</div>`;
       } else {
         outdatedOverviewHtml = R.outdated.slice(0, 3).map(o => `
           <div class="overview-item">
@@ -744,7 +743,7 @@
       // Card 4: What to Verify Next
       let verifyOverviewHtml = '';
       if (!R.verify_next || !R.verify_next.length) {
-        verifyOverviewHtml = `<div style="color:#1e5a2c; font-size:12.5px; padding:6px 0;">No critical follow-up verification required.</div>`;
+        verifyOverviewHtml = `<div class="all-clear-notice">No critical follow-up verification required.</div>`;
       } else {
         verifyOverviewHtml = R.verify_next.slice(0, 4).map(v => {
           const pColor = v.priority === 'P1' ? '#b91c1c' : v.priority === 'P2' ? '#b45309' : '#49634d';
@@ -990,10 +989,10 @@
           </div>
         </div>
 
-        <div style="background:#f4f7f2; border:1px solid #dce5d9; border-radius:12px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-top:14px;">
+        <div class="matrix-overview-cta">
           <div>
-            <b style="color:var(--ink); font-size:13.5px;">Full Information Coverage Matrix</b>
-            <div style="font-size:12px; color:var(--muted); margin-top:2px;">Compare each checklist criterion across all sources side-by-side with mechanically verified evidence quotes.</div>
+            <b class="matrix-overview-cta-title">Full Information Coverage Matrix</b>
+            <div class="matrix-overview-cta-desc">Compare each checklist criterion across all sources side-by-side with mechanically verified evidence quotes.</div>
           </div>
           <button type="button" class="button button-dark button-small" onclick="switchIntelTab('matrix')">
             <span>Open Coverage Matrix</span>
@@ -1109,7 +1108,7 @@
       // 4. Panel 2: Dark Spots / Gaps (Dense Table)
       const gapsList = document.getElementById('gaps-list');
       if (!R.gaps || !R.gaps.length) {
-        gapsList.innerHTML = `<div style="padding: 24px; color: #1e5a2c; text-align: center; font-size: 13.5px;">[All Clear] No information gaps detected. All expected decision criteria were addressed in the sources.</div>`;
+        gapsList.innerHTML = `<div class="all-clear-notice is-centered">[All Clear] No information gaps detected. All expected decision criteria were addressed in the sources.</div>`;
       } else {
         gapsList.innerHTML = `
           <table class="dense-table">
@@ -1143,10 +1142,10 @@
       // 5. Panel 3: Contradictions (Interactive Side-by-Side Word Diff Viewer)
       const conflictsList = document.getElementById('conflicts-list');
       if (!R.conflicts || !R.conflicts.length) {
-        conflictsList.innerHTML = `<div style="padding: 24px; color: #1e5a2c; text-align: center; font-size: 13.5px;">[All Clear] No factual contradictions found among sources.</div>`;
+        conflictsList.innerHTML = `<div class="all-clear-notice is-centered">[All Clear] No factual contradictions found among sources.</div>`;
       } else {
         conflictsList.innerHTML = `
-          <div style="padding: 16px 20px 8px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; background:#ffffff; border-bottom:1px solid var(--line);">
+          <div class="conflict-toolbar">
             <div style="font-size:12.5px; color:var(--muted);">
               Highlighting contradictory terms: <span class="diff-removed" style="text-decoration:none;">Red = Unique to Source A</span> and <span class="diff-added">Green = Contradictory in Source B</span>
             </div>
@@ -1176,7 +1175,7 @@
                       <b style="color:var(--ink); font-size:13.5px;">${esc(c.label)}</b>
                       <div style="font-size:11px; color:var(--muted); margin-top:3px;">Field: ${esc(c.field_key)}</div>
                     </td>
-                    <td><span class="cell-badge" style="background:#f9eaec; color:#82202b;">${esc(c.relation.toUpperCase())}</span></td>
+                    <td><span class="cell-badge badge-conflict">${esc(c.relation.toUpperCase())}</span></td>
                     <td>
                       <!-- Word Diff Mode -->
                       <div class="conflict-diff-view" id="diff-view-${idx}">
@@ -1184,14 +1183,14 @@
                           <div class="diff-card-source" style="cursor:pointer;" onclick="showSource('${c.a.source_id}', ${registerQuote(c.a.quote || c.a.value)})" title="Click to view highlighted in source document">
                             <div class="diff-card-header">
                               <span>${aTitle}${aOff}</span>
-                              <span style="font-size:9.5px; color:#982820; font-weight:700; letter-spacing:0.04em;">SOURCE A TERMS • READ &rarr;</span>
+                              <span class="diff-side-tag diff-tag-a" style="font-size:9.5px; font-weight:700; letter-spacing:0.04em;">SOURCE A TERMS • READ &rarr;</span>
                             </div>
                             <div style="color:var(--ink); line-height:1.6;">${diff.diffA}</div>
                           </div>
                           <div class="diff-card-source" style="cursor:pointer;" onclick="showSource('${c.b.source_id}', ${registerQuote(c.b.quote || c.b.value)})" title="Click to view highlighted in source document">
                             <div class="diff-card-header">
                               <span>${bTitle}${bOff}</span>
-                              <span style="font-size:9.5px; color:#1b6338; font-weight:700; letter-spacing:0.04em;">SOURCE B CONFLICT • READ &rarr;</span>
+                              <span class="diff-side-tag diff-tag-b" style="font-size:9.5px; font-weight:700; letter-spacing:0.04em;">SOURCE B CONFLICT • READ &rarr;</span>
                             </div>
                             <div style="color:var(--ink); line-height:1.6;">${diff.diffB}</div>
                           </div>
@@ -1204,7 +1203,7 @@
                         <div style="font-size:12px; margin-bottom:4px; cursor:pointer;" onclick="showSource('${c.b.source_id}', ${registerQuote(c.b.quote)})" title="Click to view highlighted in source document"><b>${bTitle}:</b> "${esc(c.b.quote)}" <span style="color:var(--brand-dark); font-size:11px;">&rarr;</span></div>
                       </div>
 
-                      <div style="font-size:11.5px; color:var(--muted); margin-top:6px; background:#fafbf8; padding:8px 12px; border-radius:6px; border:1px solid #edf1eb;">
+                      <div class="conflict-assessment-box">
                         <b>Assessment:</b> ${esc(c.explanation || '')}
                       </div>
                     </td>
@@ -1220,7 +1219,7 @@
       // 6. Panel 4: Outdated Signals (Dense Table)
       const outdatedList = document.getElementById('outdated-list');
       if (!R.outdated || !R.outdated.length) {
-        outdatedList.innerHTML = `<div style="padding: 24px; color: #1e5a2c; text-align: center; font-size: 13.5px;">[All Clear] All sources and deadlines appear current.</div>`;
+        outdatedList.innerHTML = `<div class="all-clear-notice is-centered">[All Clear] All sources and deadlines appear current.</div>`;
       } else {
         outdatedList.innerHTML = `
           <table class="dense-table">
@@ -1250,7 +1249,7 @@
       // 7. Panel 5: Action Steps (Interactive Progress Checklist & Clipboard Tool)
       const verifyList = document.getElementById('verify-list');
       if (!R.verify_next || !R.verify_next.length) {
-        verifyList.innerHTML = `<div style="padding: 24px; color: #1e5a2c; text-align: center; font-size: 13.5px;">[All Clear] No pending verification actions needed.</div>`;
+        verifyList.innerHTML = `<div class="all-clear-notice is-centered">[All Clear] No pending verification actions needed.</div>`;
       } else {
         const totalItems = R.verify_next.length;
         verifyList.innerHTML = `
@@ -1336,19 +1335,19 @@
       if (discrepancies.length > 0) {
         html += `
           <div class="discrepancy-banner">
-            <div style="display:flex; align-items:center; gap:8px; font-weight:700; color:#982820; font-size:13.5px; margin-bottom:8px;">
+            <div class="discrepancy-title" style="display:flex; align-items:center; gap:8px; font-weight:700; font-size:13.5px; margin-bottom:8px;">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               <span>${discrepancies.length} Direct Discrepanc${discrepancies.length === 1 ? 'y' : 'ies'} Detected Across Sources</span>
             </div>
-            <p style="font-size:12px; color:#6a221a; margin:0 0 10px 0;">
+            <p class="discrepancy-desc" style="font-size:12px; margin:0 0 10px 0;">
               The sources disagree on key concrete values (dates, fees, or eligibility criteria). Review these carefully:
             </p>
             <div style="display:flex; flex-direction:column; gap:8px;">
               ${discrepancies.map(d => `
                 <div class="discrepancy-card">
                   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                    <b style="font-size:12.5px; color:#82202b;">${esc(d.category)}</b>
-                    <span class="cell-badge" style="background:#faeaeb; color:#982820; font-size:10px;">${esc(d.severity.toUpperCase())} PRIORITY</span>
+                    <b class="discrepancy-cat" style="font-size:12.5px;">${esc(d.category)}</b>
+                    <span class="cell-badge badge-conflict" style="font-size:10px;">${esc(d.severity.toUpperCase())} PRIORITY</span>
                   </div>
                   <div style="font-size:12px; color:var(--ink); font-weight:500; margin-bottom:8px;">
                     ${esc(d.detail)}
@@ -1357,7 +1356,7 @@
                     <div class="diff-card-source" style="cursor:pointer;" onclick="showSource('${d.a.source_id}', ${registerQuote(d.a.snippet || d.a.value)})" title="Click to view highlighted in interactive source reader">
                       <div class="diff-card-header">
                         <span>${esc(d.a.title)}</span>
-                        <span style="font-size:9.5px; color:#982820; font-weight:700;">SOURCE A • READ &rarr;</span>
+                        <span class="diff-side-tag diff-tag-a" style="font-size:9.5px; font-weight:700;">SOURCE A • READ &rarr;</span>
                       </div>
                       <div style="font-weight:700; color:var(--ink); font-size:12px;">${esc(d.a.value)}</div>
                       <div style="font-size:11px; color:var(--muted); margin-top:3px; line-height:1.4;">"${esc(d.a.snippet)}"</div>
@@ -1365,7 +1364,7 @@
                     <div class="diff-card-source" style="cursor:pointer;" onclick="showSource('${d.b.source_id}', ${registerQuote(d.b.snippet || d.b.value)})" title="Click to view highlighted in interactive source reader">
                       <div class="diff-card-header">
                         <span>${esc(d.b.title)}</span>
-                        <span style="font-size:9.5px; color:#1b6338; font-weight:700;">SOURCE B • READ &rarr;</span>
+                        <span class="diff-side-tag diff-tag-b" style="font-size:9.5px; font-weight:700;">SOURCE B • READ &rarr;</span>
                       </div>
                       <div style="font-weight:700; color:var(--ink); font-size:12px;">${esc(d.b.value)}</div>
                       <div style="font-size:11px; color:var(--muted); margin-top:3px; line-height:1.4;">"${esc(d.b.snippet)}"</div>
@@ -1723,8 +1722,52 @@
       `).join('');
     }
 
+    // -------------------------------------------------------------
+    // Theme Management (Light / Dark Mode)
+    // -------------------------------------------------------------
+    const THEME_STORAGE_KEY = "sonix_theme";
+
+    function getCurrentTheme() {
+      return document.documentElement.getAttribute('data-theme') || 'light';
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+      } catch (e) {}
+      updateThemeToggleUI(theme);
+    }
+
+    function toggleTheme() {
+      const current = getCurrentTheme();
+      const next = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+    }
+
+    function updateThemeToggleUI(theme) {
+      const label = document.getElementById('theme-toggle-label');
+      if (label) {
+        label.textContent = theme === 'dark' ? 'Light' : 'Dark';
+      }
+      const btn = document.getElementById('theme-toggle-btn');
+      if (btn) {
+        btn.setAttribute('title', `Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`);
+        btn.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`);
+      }
+    }
+
+    try {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+        if (!localStorage.getItem(THEME_STORAGE_KEY)) {
+          applyTheme(e.matches ? 'dark' : 'light');
+        }
+      });
+    } catch(e) {}
+
     // Initialize history UI count, dropzone, and live metrics on page load
     window.addEventListener('DOMContentLoaded', () => {
+      updateThemeToggleUI(getCurrentTheme());
       purgeLegacyDemoHistory();
       updateHistoryUI();
       initDropzone();
