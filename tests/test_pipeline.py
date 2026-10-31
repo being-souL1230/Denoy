@@ -168,3 +168,21 @@ def test_groq_config_defaults():
     assert "groq.com" in llm.GROQ_BASE_URL
 
 
+def test_pipeline_technical_audit_contract():
+    """Verify that run_analysis includes technical_audit in the report contract."""
+    res = run_analysis(
+        topic="Scholarship Eligibility Guidelines",
+        pasted=[
+            ("Circular 1", "Eligibility: 60% minimum aggregate marks. Aadhaar verification mandatory."),
+            ("Circular 2", "Eligibility: 75% minimum marks. Non-refundable fee.")
+        ]
+    )
+    assert "technical_audit" in res
+    assert "by_source" in res["technical_audit"]
+    assert "has_stale_headers" in res["technical_audit"]
+    assert "stats" in res
+    assert "stale_headers_detected" in res["stats"]
+    assert "low_trust_domains_detected" in res["stats"]
+
+
+

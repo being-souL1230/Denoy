@@ -1,0 +1,27 @@
+/**
+ * variables.css: SoniX design tokens, core color palette, and baseline typography.
+ */
+:root {
+  --font-sans: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Manrope", sans-serif;
+  --ink: #25352a;
+  --muted: #647565;
+  --line: #dfe5d8;
+  --sage: #5b745a;
+  --mint: #e4ece0;
+  --bg: #fdfdf9;
+  --green-chip: #1f7a4d;
+  --amber-chip: #b45309;
+  --red-chip: #b91c1c;
+  --blue-chip: #1e5faf;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+section {
+  scroll-margin-top: 110px;
+}

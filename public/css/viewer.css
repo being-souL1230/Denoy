@@ -1,0 +1,271 @@
+/**
+ * viewer.css: Visual In-Text Highlighter, Interactive Reading View Drawer,
+ * Category Cycling Chips, Live In-Text Search, and Fluorescent Yellow Marker.
+ */
+
+/* Visual In-Text Highlighter & Interactive Reading View */
+.intel-viewer-drawer {
+  border-top: 2px solid var(--line);
+  background: #fafcf9;
+  padding: 20px 24px;
+  animation: fadeIn .25s ease;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.03);
+}
+.viewer-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: var(--muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.drawer-close-btn:hover {
+  background: #eef3eb;
+  color: var(--ink);
+}
+.viewer-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #f0f4ee;
+  border: 1px solid #dde6db;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 10px 0 12px 0;
+}
+.viewer-legend-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.viewer-toolbar-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-right: 2px;
+}
+.legend-chip {
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 600;
+}
+.legend-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.legend-chip .chip-count {
+  background: rgba(0,0,0,0.07);
+  padding: 1px 5px;
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 3px;
+}
+.legend-chip-target {
+  background: #fef08a;
+  color: #713f12;
+  border-color: #facc15;
+  font-weight: 700;
+  animation: pulseTargetYellow 2s ease-in-out infinite alternate;
+}
+.legend-chip-date {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #bae6fd;
+}
+.legend-chip-date:hover {
+  background: #bae6fd;
+}
+.legend-chip-money {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+.legend-chip-money:hover {
+  background: #fde68a;
+}
+.legend-chip-eligibility {
+  background: #ede9fe;
+  color: #5b21b6;
+  border-color: #ddd6fe;
+}
+.legend-chip-eligibility:hover {
+  background: #ddd6fe;
+}
+.legend-chip-doc {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+.legend-chip-doc:hover {
+  background: #bbf7d0;
+}
+.legend-chip-trap {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+.legend-chip-trap:hover {
+  background: #fecaca;
+}
+.viewer-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.viewer-search-wrap input {
+  border: 1px solid #c9d8c6;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  background: #ffffff;
+  outline: none;
+  width: 170px;
+}
+.viewer-search-wrap input:focus {
+  border-color: var(--brand-dark);
+  box-shadow: 0 0 0 2px rgba(38, 55, 43, 0.15);
+}
+.viewer-nav-status {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brand-dark);
+  background: #e2ecd9;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: none;
+  white-space: nowrap;
+}
+.viewer-search-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: #4338ca;
+  background: #e0e7ff;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: none;
+  white-space: nowrap;
+}
+.drawer-source-pre {
+  white-space: pre-wrap;
+  font-size: 13.5px;
+  line-height: 1.85;
+  background: #ffffff;
+  border: 1px solid #e1ebe0;
+  border-radius: 12px;
+  padding: 22px;
+  max-height: 520px;
+  overflow-y: auto;
+  color: #1a271d;
+  font-family: inherit;
+}
+
+/* Fluorescent Yellow Marker for Clicked Finding */
+.drawer-target-highlight {
+  background: #fef08a !important;
+  background-image: linear-gradient(120deg, rgba(254, 240, 138, 0.95) 0%, rgba(253, 224, 71, 0.98) 100%) !important;
+  color: #713f12 !important;
+  font-weight: 700 !important;
+  padding: 3px 8px;
+  border-radius: 5px;
+  border: 1px solid #eab308;
+  box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.45);
+  animation: pulseTargetYellow 2s ease-in-out infinite alternate;
+  display: inline;
+}
+.target-marker-badge {
+  background: #713f12;
+  color: #fef08a;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-right: 6px;
+  letter-spacing: 0.04em;
+  display: inline-block;
+  vertical-align: middle;
+}
+@keyframes pulseTargetYellow {
+  from { box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.3); }
+  to { box-shadow: 0 0 0 6px rgba(234, 179, 8, 0.7); }
+}
+.pulse-chip-target {
+  outline: 2px solid #0f766e !important;
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.35) !important;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+/* Critical Keywords Colored Badges throughout Document */
+.reader-kw-date {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 700;
+  font-size: 12.5px;
+  border: 1px solid #bae6fd;
+  display: inline;
+}
+.reader-kw-money {
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 700;
+  font-size: 12.5px;
+  border: 1px solid #fde68a;
+  display: inline;
+}
+.reader-kw-eligibility {
+  background: #ede9fe;
+  color: #5b21b6;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 700;
+  font-size: 12.5px;
+  border: 1px solid #ddd6fe;
+  display: inline;
+}
+.reader-kw-doc {
+  background: #dcfce7;
+  color: #166534;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 700;
+  font-size: 12.5px;
+  border: 1px solid #bbf7d0;
+  display: inline;
+}
+.reader-kw-trap {
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 800;
+  font-size: 12.5px;
+  border-bottom: 2px solid #ef4444;
+  display: inline;
+}

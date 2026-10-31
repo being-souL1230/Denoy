@@ -127,44 +127,111 @@
   "sources": [
     {
       "id": "S1",
-      "url": null,
-      "title": "Website A (Official Guidelines)",
-      "kind": "pasted",
+      "url": "https://scholarships.gov.in/guidelines-2026",
+      "title": "National Scholarships Portal (Official)",
+      "kind": "url",
       "is_official": true,
       "ok": true,
       "truncated": false,
-      "date": null,
-      "date_source": null,
-      "cycles": [],
-      "text": "Merit Scholarship Guidelines: Minimum 60% marks required in qualifying examination. Application deadline is 30 November."
+      "date": "2026-10-15",
+      "date_source": "header:last-modified",
+      "cycles": [2026],
+      "text": "Merit Scholarship Guidelines: Minimum 60% marks required in qualifying examination. Application deadline is 30 November.",
+      "technical_audit": {
+        "is_url": true,
+        "url": "https://scholarships.gov.in/guidelines-2026",
+        "domain": "scholarships.gov.in",
+        "is_https": true,
+        "is_ip": false,
+        "trust_tier": "official_government",
+        "trust_badge": "Official Gov Domain",
+        "trust_badge_color": "green",
+        "is_stale": false,
+        "stale_alert": null,
+        "last_modified": "2026-10-15",
+        "last_modified_human": "15 Oct 2026",
+        "server": "NIC Web Server 2.4",
+        "status_code": 200,
+        "warnings": []
+      }
     },
     {
       "id": "S2",
-      "url": null,
-      "title": "Website B (Education Portal)",
-      "kind": "pasted",
+      "url": "https://education-portal.org/scholarship",
+      "title": "Education Advisory Bulletin",
+      "kind": "url",
       "is_official": false,
       "ok": true,
       "truncated": false,
-      "date": null,
-      "date_source": null,
-      "cycles": [],
-      "text": "Scholarship Eligibility Update: Minimum 75% marks required for selection. Deadline is 15 December. Renewal requires maintaining 70% in each semester."
+      "date": "2026-09-20",
+      "date_source": "header:last-modified",
+      "cycles": [2026],
+      "text": "Scholarship Eligibility Update: Minimum 75% marks required for selection. Deadline is 15 December. Renewal requires maintaining 70% in each semester.",
+      "technical_audit": {
+        "is_url": true,
+        "url": "https://education-portal.org/scholarship",
+        "domain": "education-portal.org",
+        "is_https": true,
+        "is_ip": false,
+        "trust_tier": "standard_web",
+        "trust_badge": "Standard Web Domain",
+        "trust_badge_color": "neutral",
+        "is_stale": false,
+        "stale_alert": null,
+        "last_modified": "2026-09-20",
+        "last_modified_human": "20 Sep 2026",
+        "server": "cloudflare",
+        "status_code": 200,
+        "warnings": []
+      }
     },
     {
       "id": "S3",
-      "url": null,
-      "title": "Website C (Old Forum Post)",
-      "kind": "pasted",
+      "url": "http://scholarship-alerts.blogspot.com/2022/notice.html",
+      "title": "Scholarship Alerts Blog",
+      "kind": "url",
       "is_official": false,
       "ok": true,
       "truncated": false,
-      "date": null,
-      "date_source": null,
+      "date": "2022-02-14",
+      "date_source": "header:last-modified",
       "cycles": [
         2022
       ],
-      "text": "Scholarship 2022-23 cycle details: Last date to apply is 31 March 2023. Documents needed: Income certificate."
+      "text": "Scholarship 2022-23 cycle details: Last date to apply is 31 March 2023. Documents needed: Income certificate.",
+      "technical_audit": {
+        "is_url": true,
+        "url": "http://scholarship-alerts.blogspot.com/2022/notice.html",
+        "domain": "scholarship-alerts.blogspot.com",
+        "is_https": false,
+        "is_ip": false,
+        "trust_tier": "low_trust_free_host",
+        "trust_badge": "Low Trust Domain",
+        "trust_badge_color": "amber",
+        "is_stale": true,
+        "stale_alert": "⚠️ Server reports this webpage has not been updated since Feb 2022",
+        "last_modified": "2022-02-14",
+        "last_modified_human": "14 Feb 2022",
+        "server": "GSE/2.0",
+        "status_code": 200,
+        "warnings": [
+          {
+            "type": "insecure_transport",
+            "severity": "medium",
+            "message": "Insecure HTTP: Communication is unencrypted."
+          },
+          {
+            "type": "low_trust_host",
+            "severity": "high",
+            "message": "Hosted on a free weblog / hosting domain (scholarship-alerts.blogspot.com). Unofficial source prone to outdated notices."
+          },
+          {
+            "type": "stale_server_header",
+            "severity": "high",
+            "message": "⚠️ Server reports this webpage has not been updated since Feb 2022"
+          }
+        ]
+      }
     }
   ],
   "findings": [
@@ -520,6 +587,33 @@
       "priority": "P3"
     }
   ],
+  "technical_audit": {
+    "by_source": {
+      "S1": { "trust_badge": "Official Gov Domain", "is_stale": false, "is_https": true, "domain": "scholarships.gov.in" },
+      "S2": { "trust_badge": "Standard Web Domain", "is_stale": false, "is_https": true, "domain": "education-portal.org" },
+      "S3": { "trust_badge": "Low Trust Domain", "is_stale": true, "stale_alert": "⚠️ Server reports this webpage has not been updated since Feb 2022", "is_https": false, "domain": "scholarship-alerts.blogspot.com" }
+    },
+    "has_stale_headers": true,
+    "has_low_trust_domains": true,
+    "stale_alerts": [
+      {
+        "source_id": "S3",
+        "title": "Scholarship Alerts Blog",
+        "url": "http://scholarship-alerts.blogspot.com/2022/notice.html",
+        "alert": "⚠️ Server reports this webpage has not been updated since Feb 2022",
+        "last_modified": "2022-02-14"
+      }
+    ],
+    "low_trust_alerts": [
+      {
+        "source_id": "S3",
+        "title": "Scholarship Alerts Blog",
+        "domain": "scholarship-alerts.blogspot.com",
+        "badge": "Low Trust Domain",
+        "message": "Hosted on a free weblog / hosting domain (scholarship-alerts.blogspot.com). Unofficial source prone to fake circulars or outdated notices."
+      }
+    ]
+  },
   "stats": {
     "sources_used": 3,
     "sources_failed": 0,
@@ -528,6 +622,8 @@
     "gaps": 6,
     "conflicts": 4,
     "outdated": 4,
-    "uncertain": 0
+    "uncertain": 0,
+    "stale_headers_detected": 1,
+    "low_trust_domains_detected": 1
   }
 }

@@ -63,7 +63,7 @@ def run_analysis(
             u, is_off = item[0], item[1] if len(item) > 1 else False
         else:
             u, is_off = item, False
-        sources.append(fetch_url(u, sid, is_official=is_off))
+        sources.append(fetch_url(u, sid, is_official=is_off, today=today))
 
     for item in pasted:
         sid = f"S{len(sources) + 1}"
@@ -214,16 +214,80 @@ def run_analysis(
                         "quote": c.get("sentence") or c.get("matched_term"),
                     })
 
+    # Deterministic Stage: Technical HTTP & Domain Security Audit
+    technical_audit = {
+        "by_source": {},
+        "has_stale_headers": False,
+        "has_low_trust_domains": False,
+        "stale_alerts": [],
+        "low_trust_alerts": [],
+    }
+
+    for s in usable:
+        ta = s.get("technical_audit") or {}
+        sid = s["id"]
+        technical_audit["by_source"][sid] = ta
+
+        if ta.get("is_stale") and ta.get("stale_alert"):
+            technical_audit["has_stale_headers"] = True
+            technical_audit["stale_alerts"].append({
+                "source_id": sid,
+                "title": s.get("title") or sid,
+                "url": s.get("url"),
+                "alert": ta["stale_alert"],
+                "last_modified": ta.get("last_modified"),
+            })
+            outdated.append({
+                "source_id": sid,
+                "title": s.get("title") or sid,
+                "severity": "high",
+                "reason": f"Server Last-Modified header indicates page has not been updated since {ta.get('last_modified_human', 'a past date')}."
+            })
+            verify_next.insert(0, {
+                "type": "stale_header",
+                "score": 4.9,
+                "field": "Server Freshness Alert",
+                "action": f"{ta['stale_alert']} for source {sid} ({s.get('title', sid)})",
+                "rank": 1,
+                "priority": "P1",
+                "source_id": sid,
+                "quote": f"Last-Modified: {ta.get('headers', {}).get('last_modified', '')}",
+            })
+
+        if ta.get("trust_tier") in ("low_trust_free_host", "low_trust_ip"):
+            technical_audit["has_low_trust_domains"] = True
+            badge = ta.get("trust_badge", "Low Trust Domain")
+            warn_msg = ta.get("warnings", [{}])[0].get("message") if ta.get("warnings") else f"Source {sid} domain is low trust."
+            technical_audit["low_trust_alerts"].append({
+                "source_id": sid,
+                "title": s.get("title") or sid,
+                "domain": ta.get("domain"),
+                "badge": badge,
+                "message": warn_msg
+            })
+            verify_next.append({
+                "type": "low_trust_domain",
+                "score": 3.8,
+                "field": f"Security: {badge}",
+                "action": f"Verify authenticity of {sid} ({ta.get('domain')}): {warn_msg}",
+                "rank": 99,
+                "priority": "P2",
+                "source_id": sid,
+                "quote": s.get("url", ""),
+            })
+
     # Re-index ranks
     for idx, v in enumerate(verify_next, start=1):
         v["rank"] = idx
 
-    # Attach trap_clauses to each source object
+    # Attach trap_clauses and technical_audit to each source object
     enriched_sources = []
     for s in sources:
         s_data = {k: v for k, v in s.items() if k != "text"} | ({"text": s["text"]} if s.get("ok") else {})
         if s.get("id") in trap_analysis.get("by_source", {}):
             s_data["trap_clauses"] = trap_analysis["by_source"][s["id"]]
+        if s.get("technical_audit"):
+            s_data["technical_audit"] = s["technical_audit"]
         enriched_sources.append(s_data)
 
     # Compile final data model (contract)
@@ -242,6 +306,7 @@ def run_analysis(
         "verify_next": verify_next,
         "entities_comparison": entities_comparison,
         "trap_clauses": trap_analysis,
+        "technical_audit": technical_audit,
         "stats": {
             "sources_used": len(usable),
             "sources_failed": len(sources) - len(usable),
@@ -253,5 +318,7 @@ def run_analysis(
             "uncertain": len(uncertain),
             "entity_discrepancies": len(entities_comparison.get("discrepancies", [])),
             "trap_clauses_detected": trap_analysis.get("total_traps_found", 0),
+            "stale_headers_detected": len(technical_audit["stale_alerts"]),
+            "low_trust_domains_detected": len(technical_audit["low_trust_alerts"]),
         },
     }

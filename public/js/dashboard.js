@@ -9,17 +9,273 @@
 
     const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
     
+    // Curated 1-Click Interactive Test Presets
+    const PRESETS = {
+      scholarship: {
+        topic: "Post-Matric Scholarship Scheme Eligibility & Income Ceiling",
+        text: `=== SOURCE 1: Ministry of Social Justice Official Circular 2026 ===
+1. Mandatory Eligibility: Students belonging to eligible categories enrolled in post-matric courses.
+2. Family Income Ceiling: Total annual family income from all sources must not exceed Rs. 2,50,000 per annum.
+3. Service Bond: Candidates receiving fellowship above Rs. 25,000 must sign a 2-year rural service bond.
+4. Submission Deadline: Complete digital applications must be submitted by 15 November 2026. Invalid without verified Aadhaar e-KYC.
+5. Critical Condition: Scheme benefits are strictly subject to fund availability from the state budget. Application will be rejected if self-declaration is unverified.
+
+=== SOURCE 2: State Higher Education Advisory Guide ===
+1. Eligibility: All post-matric college students enrolled in current session.
+2. Family Income Ceiling: Maximum annual income reported as Rs. 3,00,000 per annum for session 2026.
+3. Processing Fee: Non-refundable application processing fee of Rs. 200 applicable on submission.
+4. Submission Deadline: Portal will accept submissions until 30 November 2026 without prior notice.
+5. Forfeiture Clause: In case of incorrect bank account credentials, fellowship benefits will be forfeited immediately.`,
+        isOfficial: true
+      },
+      ssc: {
+        topic: "SSC CHSL Examination Application Form 2026 Guidelines",
+        text: `=== SOURCE 1: Staff Selection Commission Official Notification 2026 ===
+1. Age Limit: Candidate must be 18 to 27 years as on 01-08-2026. Permissible upper age relaxation for OBC is 3 years, SC/ST 5 years.
+2. Application Window: Online application opens on 10 May 2026 and closes strictly on 08 June 2026 at 23:00 hours.
+3. Photograph Specification: Live photograph captured via webcam without cap or spectacles. Application will be rejected if photograph is blurred or invalid.
+4. Application Fee: Rs. 100/- payable online. Women and SC/ST candidates are exempted. Fee once paid is non-refundable.
+
+=== SOURCE 2: Career Advisory Portal Circular ===
+1. Age Criteria: Minimum 18 years and maximum 28 years as of 01-01-2026.
+2. Last Date: Candidates can submit forms until 15 June 2026 with late fee payment.
+3. Fee: Fixed fee of Rs. 150 for all general applicants.
+4. Strict Clause: Debarred candidates from any state exams cannot apply under any circumstances.`,
+        isOfficial: true
+      },
+      neet: {
+        topic: "NEET UG Eligibility Criteria & Admission Disqualification Rules",
+        text: `=== SOURCE 1: National Testing Agency (NTA) Official Bulletin ===
+1. Age Limit: Candidate must have completed 17 years at the time of admission. There is no upper age limit.
+2. Minimum Qualifying Marks: Physics, Chemistry, Biology aggregate must be at least 50% for Unreserved, 40% for OBC/SC/ST.
+3. Mandatory Documents: Original Class 10/12 marksheets, valid category certificate. Invalid without central format certificate.
+4. Financial Penalty: Quitting allotted seat after round 2 entails a penalty of Rs. 5,00,000 and forfeiture of security deposit.
+
+=== SOURCE 2: Medical Admission Guidance Handbook ===
+1. Age Limit: Minimum age 17 years, maximum age limit 25 years strictly enforced.
+2. Qualifying Marks: Candidate must secure minimum 55% in PCB subjects.
+3. Bond Clause: Mandatory 3-year government service bond applicable in state medical colleges.
+4. Strict Prohibition: Canvassing in any form is strictly prohibited and leads to debarment.`,
+        isOfficial: true
+      },
+      upsc: {
+        topic: "UPSC Civil Services Preliminary Examination Mandatory Rules",
+        text: `=== SOURCE 1: Union Public Service Commission Official Gazette ===
+1. Number of Attempts: 6 attempts for General, 9 attempts for OBC, unlimited attempts for SC/ST within age limits.
+2. Cut-off Date for Age: Candidate must have attained 21 years and must not have attained 32 years on 1st August 2026.
+3. Mandatory Identity Proof: Same photo identity card submitted online must be produced at examination venue.
+4. Disqualification: Mobile phones and electronic gadgets are strictly prohibited in exam halls. Candidature will be cancelled without prior notice if found.
+
+=== SOURCE 2: Civil Services Study Circle Guidance ===
+1. Attempts: Up to 7 attempts for general category candidates.
+2. Age Window: 21 to 35 years for all reserved categories.
+3. Document Verification: Self-attested copies required at prelims stage.
+4. Refund Policy: Examination fee is non-refundable under any circumstance.`,
+        isOfficial: true
+      }
+    };
+
+    function handleTopicInput(el) {
+      const clearBtn = document.getElementById('capsule-clear-btn');
+      if (clearBtn) {
+        clearBtn.style.display = (el && el.value.trim().length > 0) ? 'inline-flex' : 'none';
+      }
+      updateSourceMetrics();
+    }
+
+    function clearInput(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = '';
+        el.focus();
+        if (id === 'topic') handleTopicInput(el);
+        updateSourceMetrics();
+      }
+    }
+
+    async function pasteFromClipboard(targetId) {
+      try {
+        const text = await navigator.clipboard.readText();
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.value = text;
+          if (targetId === 'topic') handleTopicInput(el);
+          updateSourceMetrics();
+          setStatus(`[Pasted] Successfully pasted ${text.length} characters from clipboard.`);
+        }
+      } catch (err) {
+        const el = document.getElementById(targetId);
+        if (el) {
+          el.focus();
+          setStatus("[Info] Please use Ctrl+V to paste into the selected field.", false);
+        }
+      }
+    }
+
+    function focusNextOrAnalyze() {
+      const topic = document.getElementById('topic')?.value.trim();
+      const urls = document.getElementById('urls')?.value.trim();
+      const pasted = document.getElementById('pasted_text')?.value.trim();
+      if (topic && (urls || pasted)) {
+        runAnalysis();
+      } else if (currentSourceMode === 'urls') {
+        document.getElementById('urls')?.focus();
+      } else {
+        document.getElementById('pasted_text')?.focus();
+      }
+    }
+
     function setTopic(val) {
-      document.getElementById('topic').value = val;
+      const el = document.getElementById('topic');
+      if (el) {
+        el.value = val;
+        handleTopicInput(el);
+      }
+    }
+
+    function loadDemoPreset(key) {
+      const preset = PRESETS[key];
+      if (!preset) return;
+
+      const topicInput = document.getElementById('topic');
+      if (topicInput) {
+        topicInput.value = preset.topic;
+        handleTopicInput(topicInput);
+      }
+
+      switchSourceTab('pasted');
+      const pastedInput = document.getElementById('pasted_text');
+      if (pastedInput) {
+        pastedInput.value = preset.text;
+      }
+
+      const officialSwitch = document.getElementById('mark_official_active');
+      if (officialSwitch) officialSwitch.checked = preset.isOfficial;
+
+      updateSourceMetrics();
+      setStatus(`[Preset Loaded] "${preset.topic}" with contrasting circulars loaded. Click "Audit & Identify Dark Spots" to analyze!`);
     }
 
     function switchSourceTab(mode) {
       currentSourceMode = mode;
-      document.getElementById('panel-urls').style.display = mode === 'urls' ? 'block' : 'none';
-      document.getElementById('panel-pasted').style.display = mode === 'pasted' ? 'block' : 'none';
-      
-      document.getElementById('btn-tab-urls').classList.toggle('is-active', mode === 'urls');
-      document.getElementById('btn-tab-pasted').classList.toggle('is-active', mode === 'pasted');
+      const panelUrls = document.getElementById('panel-urls');
+      const panelPasted = document.getElementById('panel-pasted');
+      const panelFile = document.getElementById('panel-file');
+
+      if (panelUrls) panelUrls.style.display = mode === 'urls' ? 'block' : 'none';
+      if (panelPasted) panelPasted.style.display = mode === 'pasted' ? 'block' : 'none';
+      if (panelFile) panelFile.style.display = mode === 'file' ? 'block' : 'none';
+
+      document.getElementById('btn-tab-urls')?.classList.toggle('is-active', mode === 'urls');
+      document.getElementById('btn-tab-pasted')?.classList.toggle('is-active', mode === 'pasted');
+      document.getElementById('btn-tab-file')?.classList.toggle('is-active', mode === 'file');
+    }
+
+    function addPresetUrl(url) {
+      switchSourceTab('urls');
+      const urlsEl = document.getElementById('urls');
+      if (urlsEl) {
+        const current = urlsEl.value.trim();
+        urlsEl.value = current ? `${current}\n${url}` : url;
+        updateSourceMetrics();
+      }
+    }
+
+    function updateSourceMetrics() {
+      const topic = document.getElementById('topic')?.value.trim() || '';
+      const urlsVal = document.getElementById('urls')?.value || '';
+      const pastedVal = document.getElementById('pasted_text')?.value || '';
+
+      const urlList = urlsVal.split('\n').map(x => x.trim()).filter(Boolean);
+      const urlCountPill = document.getElementById('url-count-pill');
+      const urlMetrics = document.getElementById('url-metrics');
+      if (urlCountPill) urlCountPill.textContent = `${urlList.length}`;
+      if (urlMetrics) urlMetrics.textContent = `${urlList.length} URL${urlList.length === 1 ? '' : 's'} ready`;
+
+      const words = pastedVal.trim() ? pastedVal.trim().split(/\s+/).length : 0;
+      const chars = pastedVal.length;
+      const textCountPill = document.getElementById('text-count-pill');
+      const textMetrics = document.getElementById('text-metrics');
+      if (textCountPill) textCountPill.textContent = `${words} w`;
+      if (textMetrics) textMetrics.textContent = `${words} words · ${chars.toLocaleString()} characters`;
+
+      const totalSources = urlList.length + (pastedVal.trim() ? 1 : 0);
+      const readinessPill = document.getElementById('studio-readiness-pill');
+      if (readinessPill) {
+        if (topic.length > 0 && totalSources >= 1) {
+          readinessPill.className = 'studio-readiness-pill is-ready';
+          readinessPill.innerHTML = `<span>● Ready to Audit (${totalSources} source${totalSources > 1 ? 's' : ''})</span>`;
+        } else if (topic.length > 0) {
+          readinessPill.className = 'studio-readiness-pill';
+          readinessPill.innerHTML = `<span>○ Add at least 1 URL or circular text</span>`;
+        } else {
+          readinessPill.className = 'studio-readiness-pill';
+          readinessPill.innerHTML = `<span>○ Awaiting question & sources...</span>`;
+        }
+      }
+    }
+
+    function handleCircularFileUpload(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const isJson = file.name.endsWith('.json');
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const content = e.target.result;
+        if (isJson) {
+          try {
+            const data = JSON.parse(content);
+            if (data.findings || data.sources) {
+              R = data;
+              saveSnapshotToHistory(R, data.topic || file.name, [], "");
+              render();
+              setStatus(`[Loaded] Successfully loaded saved audit: ${file.name}`);
+              document.getElementById('results-container')?.scrollIntoView({ behavior: 'smooth' });
+              return;
+            }
+          } catch (err) {}
+        }
+        // Fallback or text/md file: put into pasted_text
+        switchSourceTab('pasted');
+        const pastedInput = document.getElementById('pasted_text');
+        if (pastedInput) {
+          pastedInput.value = content;
+          updateSourceMetrics();
+          setStatus(`[File Loaded] Ingested "${file.name}" (${content.length} chars) into comparison deck.`);
+        }
+      };
+
+      reader.readAsText(file);
+    }
+
+    function initDropzone() {
+      const dropzone = document.getElementById('source-dropzone');
+      if (!dropzone) return;
+
+      ['dragenter', 'dragover'].forEach(name => {
+        dropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(name => {
+        dropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('dragover');
+        });
+      });
+
+      dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length) {
+          const fakeInput = { files: dt.files };
+          handleCircularFileUpload(fakeInput);
+        }
+      });
     }
 
     function setStatus(msg, isError = false) {
@@ -41,12 +297,13 @@
     }
 
     async function runAnalysis() {
-      const topic = document.getElementById('topic').value.trim();
-      const urls = document.getElementById('urls').value.split('\n').map(x => x.trim()).filter(Boolean);
-      const pastedRaw = document.getElementById('pasted_text').value.trim();
+      const topic = document.getElementById('topic')?.value.trim();
+      const urls = document.getElementById('urls')?.value.split('\n').map(x => x.trim()).filter(Boolean) || [];
+      const pastedRaw = document.getElementById('pasted_text')?.value.trim() || '';
 
       if (!topic) {
-        setStatus("[Notice] Please enter a research question or topic.", true);
+        setStatus("[Notice] Please enter a research question or topic in the search box.", true);
+        document.getElementById('topic')?.focus();
         return;
       }
 
@@ -56,17 +313,15 @@
       }
 
       if (!urls.length && !pasted.length) {
-        setStatus("[Notice] Please add at least 1 URL or paste document text.", true);
+        setStatus("[Notice] Please add at least 1 URL or paste document text to contrast.", true);
         return;
       }
 
-
       let official_ids = [];
-      if (document.getElementById('mark_official_url')?.checked && urls.length > 0) {
+      const isOfficial = document.getElementById('mark_official_active')?.checked ??
+                         (document.getElementById('mark_official_url')?.checked || document.getElementById('mark_official_pasted')?.checked);
+      if (isOfficial) {
         official_ids.push("S1");
-      }
-      if (document.getElementById('mark_official_pasted')?.checked && pasted.length > 0) {
-        official_ids.push("S" + (urls.length + 1));
       }
 
       setStatus("[Processing] Initiating 10-stage comparison engine...");
@@ -330,22 +585,30 @@
         <div class="trap-warning-box">
           <div class="trap-warning-header">
             <div class="trap-warning-title">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span>${count} Critical Warning${count !== 1 ? 's' : ''} / Trap Clause${count !== 1 ? 's' : ''} detected in this document</span>
+              <span class="trap-warning-icon">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </span>
+              <span>${count} Critical Warning${count !== 1 ? 's' : ''} / Trap Clause${count !== 1 ? 's' : ''}</span>
             </div>
-            <span class="cell-badge" style="background:#faeaeb; color:#982820; font-size:9.5px; font-weight:700;">FINE PRINT RADAR</span>
+            <span class="trap-radar-pill">Fine Print Radar</span>
           </div>
           <div class="trap-clause-list">
             ${trapInfo.clauses.map(c => `
-              <div class="trap-clause-item" style="cursor:pointer;" onclick="showSource('${trapInfo.source_id}', ${registerQuote(c.sentence || c.matched_term)})" title="Click to view highlighted in interactive source reader">
-                <div style="margin-bottom:3px; display:flex; justify-content:space-between; align-items:center;">
-                  <span class="trap-clause-cat" style="color:${c.badge_color}; background:${c.badge_bg}; padding:1px 5px; border-radius:3px;">
+              <div class="trap-clause-item" onclick="showSource('${trapInfo.source_id}', ${registerQuote(c.sentence || c.matched_term)})" title="Click to view highlighted in interactive source reader">
+                <div class="trap-clause-meta-row">
+                  <span class="trap-clause-cat" style="color:${c.badge_color}; background:${c.badge_bg};">
                     ${esc(c.category)}
                   </span>
-                  <span style="font-size:10.5px; color:var(--brand-dark); font-weight:600;">View in Text &rarr;</span>
+                  <span class="trap-view-link">
+                    <span>View in Text</span>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </span>
                 </div>
-                <div style="font-size:12px; line-height:1.45;">"${c.highlighted_sentence}"</div>
-                <div style="font-size:10.5px; color:#6b7280; margin-top:2px;">💡 <b>Action tip:</b> ${esc(c.tip)}</div>
+                <div class="trap-clause-quote">"${c.highlighted_sentence}"</div>
+                <div class="trap-action-tip">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  <span><b>Action tip:</b> ${esc(c.tip)}</span>
+                </div>
               </div>
             `).join('')}
           </div>
@@ -377,6 +640,10 @@
         <div class="intel-stat-item"><span class="cell-badge badge-uncertain" style="margin:0 4px 0 0;">OUTDATED</span> <b>${st.outdated}</b></div>
         <div class="intel-stat-divider"></div>
         <div class="intel-stat-item"><span class="cell-badge" style="background:#fff1f2; color:#b91c1c; margin:0 4px 0 0;">TRAPS</span> <b>${st.trap_clauses_detected || 0}</b></div>
+        ${((st.stale_headers_detected || 0) + (st.low_trust_domains_detected || 0)) > 0 ? `
+          <div class="intel-stat-divider"></div>
+          <div class="intel-stat-item"><span class="cell-badge" style="background:#fee2e2; color:#991b1b; margin:0 4px 0 0;">TECH ALERTS</span> <b>${(st.stale_headers_detected || 0) + (st.low_trust_domains_detected || 0)}</b></div>
+        ` : ''}
       `;
 
       // 2. Tab Badge Counts
@@ -497,6 +764,48 @@
 
       const usableSources = R.sources.filter(s => s.ok);
 
+      // Technical Audit Freshness & Low Trust Domain Alert Banner
+      let techAlertBannerHtml = '';
+      const tech = R.technical_audit || {};
+      const staleAlerts = tech.stale_alerts || [];
+      const lowTrustAlerts = tech.low_trust_alerts || [];
+
+      if (staleAlerts.length > 0 || lowTrustAlerts.length > 0) {
+        techAlertBannerHtml = `
+          <div class="tech-audit-banner">
+            <div class="tech-banner-top">
+              <div class="tech-banner-title">
+                <span class="tech-banner-pulse"></span>
+                <span>🌐 Server Header Freshness & Technical Audit Warnings</span>
+              </div>
+              <span class="tech-banner-pill">${staleAlerts.length + lowTrustAlerts.length} Critical Technical Warning${staleAlerts.length + lowTrustAlerts.length > 1 ? 's' : ''}</span>
+            </div>
+            <div class="tech-banner-body">
+              ${staleAlerts.map(sa => `
+                <div class="tech-alert-item stale-alert">
+                  <div class="tech-alert-icon">⚠️</div>
+                  <div class="tech-alert-text">
+                    <b style="color:#991b1b;">${esc(sa.source_id)} (${esc(sa.title)}):</b>
+                    <span style="font-weight:700; color:#b91c1c;">${esc(sa.alert)}</span>
+                    <div class="tech-alert-sub">Web-server HTTP header confirms this document is unmaintained and carries high risk of outdated circular terms.</div>
+                  </div>
+                </div>
+              `).join('')}
+              ${lowTrustAlerts.map(lta => `
+                <div class="tech-alert-item lowtrust-alert">
+                  <div class="tech-alert-icon">🛡️</div>
+                  <div class="tech-alert-text">
+                    <b style="color:#9a3412;">${esc(lta.source_id)} (${esc(lta.domain || lta.title)}):</b>
+                    <span class="cell-badge badge-low-trust" style="margin:0 4px;">${esc(lta.badge)}</span>
+                    <span style="color:#7c2d12; font-size:12px;">${esc(lta.message)}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
       document.getElementById('overview-content').innerHTML = `
         <div class="completeness-banner">
           <div>
@@ -518,6 +827,8 @@
             </div>
           </div>
         </div>
+
+        ${techAlertBannerHtml}
 
         <div class="overview-grid">
           <div class="overview-card">
@@ -566,35 +877,112 @@
         </div>
 
         <!-- Deterministic Source Authority & Credibility Audit -->
-        <div class="credibility-strip">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <div>
-              <b style="color:var(--ink); font-size:13.5px;">Deterministic Source Authority & Credibility Audit</b>
-              <div style="font-size:11.5px; color:var(--muted); margin-top:2px;">Calculated mechanically via cryptographic SSL check, government/academic domain registry, timestamp verification, and corpus depth heuristics (0 AI Tokens).</div>
+        <div class="authority-audit-container">
+          <div class="authority-audit-header">
+            <div class="authority-header-left">
+              <div class="authority-header-eyebrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <span>Deterministic Web Security Layer</span>
+              </div>
+              <h4 class="authority-header-title">Deterministic Source Authority & Technical Audit</h4>
+              <p class="authority-header-desc">Audits HTTP headers (Last-Modified freshness, server identity), cryptographic SSL transport, domain registry, and scam risk heuristics without AI.</p>
             </div>
-            <span class="cell-badge badge-sourced">Deterministic Web Security Layer</span>
+            <div class="authority-header-badge">
+              <span class="security-chip">
+                <span class="security-pulse"></span>
+                Zero-AI Heuristics
+              </span>
+            </div>
           </div>
-          <div class="credibility-grid">
+          <div class="authority-cards-grid">
             ${usableSources.map(s => {
               const cred = s.credibility || {};
-              const offTag = s.is_official ? '<span style="color:#1f7a4d; font-weight:700; margin-left:4px;">(Official)</span>' : '';
+              const sourceTech = s.technical_audit || {};
+              const offTag = s.is_official ? '<span class="source-official-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Official</span>' : '';
               const trapInfo = s.trap_clauses || (R.trap_clauses && R.trap_clauses.by_source ? R.trap_clauses.by_source[s.id] : null);
               const trapBox = renderTrapWarningBox(trapInfo);
-              return `
-                <div class="cred-item-card">
-                  <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
-                    <div>
-                      <b style="color:var(--ink); font-size:12.5px;">${esc(s.id)}: ${esc((s.title || s.id).slice(0, 28))}${offTag}</b>
-                      <div style="font-size:11px; color:var(--muted);">${esc(cred.domain || (s.kind === 'pasted' ? 'Pasted Text Document' : 'Uploaded File'))}</div>
+
+              // Technical Header Audit Pills
+              let techSpecsHtml = '';
+              let staleWarningCard = '';
+              if (sourceTech && sourceTech.is_url) {
+                const httpsPill = sourceTech.is_https 
+                  ? `<span class="source-tech-pill https-secure"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> HTTPS Secure</span>`
+                  : `<span class="source-tech-pill http-insecure"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Insecure HTTP</span>`;
+                
+                const trustPill = sourceTech.trust_badge 
+                  ? `<span class="source-tech-pill ${sourceTech.trust_badge_color === 'green' ? 'gov-trust' : sourceTech.trust_badge_color === 'amber' || sourceTech.trust_badge_color === 'red' ? 'low-trust' : ''}">${esc(sourceTech.trust_badge)}</span>`
+                  : '';
+
+                const stalePill = sourceTech.is_stale 
+                  ? `<span class="source-tech-pill stale" title="${esc(sourceTech.stale_alert || '')}"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Stale: ${esc(sourceTech.last_modified_human || '2+ Yrs Old')}</span>`
+                  : (sourceTech.last_modified_human ? `<span class="source-tech-pill fresh"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> ${esc(sourceTech.last_modified_human)}</span>` : '');
+
+                const serverPill = sourceTech.server && sourceTech.server !== 'Unknown' 
+                  ? `<span class="source-tech-pill server-identity"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg> ${esc(sourceTech.server.split('/')[0])}</span>`
+                  : '';
+
+                techSpecsHtml = `
+                  <div class="source-tech-specs">
+                    ${httpsPill}
+                    ${trustPill}
+                    ${stalePill}
+                    ${serverPill}
+                  </div>
+                `;
+
+                if (sourceTech.is_stale && sourceTech.stale_alert) {
+                  staleWarningCard = `
+                    <div class="stale-warning-banner">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                      <span>${esc(sourceTech.stale_alert)}</span>
                     </div>
-                    <span class="cell-badge ${cred.badge_class || 'badge-med-trust'}">${cred.score || 50}% ${cred.badge_label || 'Trust'}</span>
+                  `;
+                }
+              }
+
+              const flagsHtml = (cred.flags && cred.flags.length) ? `
+                <div class="source-audit-flags">
+                  ${cred.flags.map(flg => `
+                    <div class="source-flag-line">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                      <span>${esc(flg)}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : '';
+
+              const kindIcon = s.kind === 'pasted' 
+                ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`
+                : (s.kind === 'file' 
+                  ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>`
+                  : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`);
+
+              return `
+                <div class="source-authority-card">
+                  <div class="source-authority-card-header">
+                    <div class="source-header-meta">
+                      <div class="source-id-row">
+                        <span class="source-id-badge">${esc(s.id)}</span>
+                        <h5 class="source-card-title" title="${esc(s.title || s.id)}">${esc(s.title || s.id)}</h5>
+                        ${offTag}
+                      </div>
+                      <div class="source-origin-row">
+                        ${kindIcon}
+                        <span>${esc(cred.domain || (s.kind === 'pasted' ? 'Pasted Text Document' : 'Uploaded File'))}</span>
+                      </div>
+                    </div>
+                    <div class="source-trust-col">
+                      <span class="cell-badge ${cred.badge_class || 'badge-med-trust'}">${cred.score || 50}% ${cred.badge_label || 'Trust'}</span>
+                    </div>
                   </div>
+                  ${staleWarningCard}
                   ${trapBox}
-                  <div style="font-size:11px; color:var(--muted); line-height:1.45; margin-top:6px;">
-                    ${(cred.flags || []).map(flg => `<div>• ${esc(flg)}</div>`).join('')}
-                  </div>
-                  <button type="button" class="button button-outline button-small" style="margin-top:10px; font-size:11px; width:100%; justify-content:center;" onclick="openInteractiveViewer('${s.id}', '')">
-                    <span>📖 Open Interactive Source Reader</span>
+                  ${flagsHtml}
+                  ${techSpecsHtml}
+                  <button type="button" class="source-open-reader-btn" onclick="openInteractiveViewer('${s.id}', '')">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    <span>Open Interactive Source Reader</span>
                   </button>
                 </div>
               `;
@@ -628,16 +1016,23 @@
       usableSources.forEach(s => {
         const off = s.is_official ? ' <span style="color:#1f7a4d; font-weight:700;">(Official)</span>' : '';
         const cred = s.credibility || {};
+        const sourceTech = s.technical_audit || {};
         const trapInfo = s.trap_clauses || (R.trap_clauses && R.trap_clauses.by_source ? R.trap_clauses.by_source[s.id] : null);
         const trapPill = (trapInfo && trapInfo.has_traps) 
           ? `<div style="margin-top:3px;"><span class="cell-badge" style="background:#faeaeb; color:#982820; font-size:9.5px;">⚠️ ${trapInfo.total_count} Trap Clauses</span></div>` 
+          : '';
+        const stalePill = (sourceTech && sourceTech.is_stale)
+          ? `<div style="margin-top:3px;"><span class="cell-badge" style="background:#fee2e2; color:#991b1b; font-size:9.5px;">⚠️ Stale Server</span></div>`
+          : '';
+        const lowTrustPill = (sourceTech && (sourceTech.trust_tier === 'low_trust_free_host' || sourceTech.trust_tier === 'low_trust_ip'))
+          ? `<div style="margin-top:3px;"><span class="cell-badge" style="background:#ffedd5; color:#9a3412; font-size:9.5px;">⚠️ Low Trust</span></div>`
           : '';
         const credHtml = cred.badge_label ? `
           <div style="margin-top:3px;">
             <span class="cell-badge ${cred.badge_class || 'badge-med-trust'}">${cred.score || 50}% ${cred.badge_label}</span>
           </div>
         ` : '';
-        matrixHtml += `<th><div>${esc(s.id)}: ${esc(s.title || s.id)}${off}</div>${credHtml}${trapPill}</th>`;
+        matrixHtml += `<th><div>${esc(s.id)}: ${esc(s.title || s.id)}${off}</div>${credHtml}${stalePill}${lowTrustPill}${trapPill}</th>`;
       });
       matrixHtml += `</tr></thead><tbody>`;
 
@@ -1235,19 +1630,22 @@
       }
     }
 
-    async function loadSampleDemo() {
+    function purgeLegacyDemoHistory() {
       try {
-        const res = await fetch("/public/data/scholarship_sample.json");
-        if (!res.ok) throw new Error("Could not load sample data");
-        const sampleData = await res.json();
-        saveSnapshotToHistory(sampleData, sampleData.topic, [
-          "https://scholarships.gov.in/guidelines",
-          "https://university-updates.ac.in/scholarship-notice",
-          "https://scholarship-alerts.blogspot.com/post-matric"
-        ], "");
-        restoreSnapshot(getHistoryList()[0].id);
-      } catch (err) {
-        alert("Sample load notice: " + err.message);
+        const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed.filter(x => {
+            const topic = (x.topic || "").toLowerCase();
+            return !topic.includes("post-matric scholarship scheme 2026") && !topic.includes("trap clauses");
+          });
+          if (cleaned.length !== parsed.length) {
+            localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(cleaned));
+          }
+        }
+      } catch (e) {
+        // silent fail
       }
     }
 
@@ -1286,15 +1684,17 @@
 
       if (!list.length) {
         listContainer.innerHTML = `
-          <div style="padding: 32px 16px; text-align: center; color: var(--muted);">
-            <div style="margin-bottom: 12px; opacity: 0.6;">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div style="padding: 44px 20px; text-align: center; color: var(--muted);">
+            <div style="margin-bottom: 14px; opacity: 0.55;">
+              <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
             </div>
-            <p style="font-size: 13.5px; font-weight: 500; color: var(--ink); margin-bottom: 6px;">No Saved Comparisons Yet</p>
-            <p style="font-size: 11.5px; line-height: 1.6; margin-bottom: 18px;">Every research run is automatically cached in your browser. Or load our pre-configured demo comparison:</p>
-            <button type="button" class="button button-outline button-small" onclick="loadSampleDemo()" style="font-size: 11.5px; margin: 0 auto;">
-              <span>Pre-load Scholarship Demo Run</span>
-            </button>
+            <p style="font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">No Saved Comparisons Yet</p>
+            <p style="font-size: 12px; line-height: 1.6; color: var(--muted); max-width: 290px; margin: 0 auto;">
+              Audits you perform are saved strictly inside your own browser's private <code style="font-family: var(--font-mono); font-size: 11px; background: rgba(0,0,0,0.05); padding: 1px 4px; border-radius: 4px;">localStorage</code>. No search or document data is shared with or visible to any other user.
+            </p>
           </div>
         `;
         return;
@@ -1323,21 +1723,12 @@
       `).join('');
     }
 
-    // Initialize history UI count on page load
+    // Initialize history UI count, dropzone, and live metrics on page load
     window.addEventListener('DOMContentLoaded', () => {
+      purgeLegacyDemoHistory();
       updateHistoryUI();
-      if (getHistoryList().length === 0) {
-        fetch('/public/data/scholarship_sample.json')
-          .then(r => r.json())
-          .then(d => {
-            saveSnapshotToHistory(d, d.topic, [
-              "https://scholarships.gov.in/guidelines",
-              "https://university-updates.ac.in/scholarship-notice",
-              "https://scholarship-alerts.blogspot.com/post-matric"
-            ], "");
-          })
-          .catch(() => {});
-      }
+      initDropzone();
+      updateSourceMetrics();
     });
 
     document.addEventListener('keydown', (e) => {

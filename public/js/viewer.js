@@ -81,13 +81,27 @@ function openInteractiveViewer(id, targetQuote = "") {
   const dateBadge = s.date ? `<span style="font-size:12px; color:var(--muted); margin-left:6px;">(Dated: ${esc(s.date)})</span>` : '<span style="font-size:12px; color:var(--muted); margin-left:6px;">(No publication date)</span>';
   const cred = s.credibility || {};
   const credBadge = cred.badge_label ? `<span class="cell-badge ${cred.badge_class || 'badge-med-trust'}" style="margin-left:6px;">${cred.score}% ${cred.badge_label}</span>` : '';
+  
+  const sourceTech = s.technical_audit || {};
+  let techHeaderBadge = '';
+  if (sourceTech && sourceTech.is_url) {
+    if (sourceTech.is_stale) {
+      techHeaderBadge += `<span class="cell-badge" style="background:#fee2e2; color:#991b1b; font-weight:700; margin-left:4px;">⚠️ Stale Server (Feb 2022)</span>`;
+    }
+    if (sourceTech.trust_badge && sourceTech.trust_badge !== 'Standard Web Domain') {
+      const bColor = sourceTech.trust_badge_color === 'green' ? '#166534' : '#9a3412';
+      const bBg = sourceTech.trust_badge_color === 'green' ? '#dcfce7' : '#ffedd5';
+      techHeaderBadge += `<span class="cell-badge" style="background:${bBg}; color:${bColor}; margin-left:4px;">${esc(sourceTech.trust_badge)}</span>`;
+    }
+  }
+
   const flagsText = (cred.flags || []).join(" • ");
   const flagsHtml = flagsText ? `<div style="font-size:11px; color:var(--muted); margin-top:4px;"><b>Deterministic Security Audit:</b> ${esc(flagsText)}</div>` : '';
 
   document.getElementById("drawer-source-meta").innerHTML = `
     <div style="display:flex; align-items:center; flex-wrap:wrap; gap:6px;">
       <b style="font-size:14px; color:var(--ink);">${esc(s.id)}: ${esc(s.title || s.id)}</b>
-      ${dateBadge} ${officialBadge} ${credBadge}
+      ${dateBadge} ${officialBadge} ${credBadge} ${techHeaderBadge}
       <span style="font-size:11.5px; color:var(--muted); margin-left:6px;">• ${wordCount.toLocaleString()} words</span>
       ${targetQuote ? '<span class="cell-badge" style="background:#fef08a; color:#713f12; font-weight:700; margin-left:6px;">Yellow Marker Active</span>' : ''}
     </div>

@@ -6,13 +6,15 @@ import os
 import re
 import shutil
 import subprocess
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Optional, List, Tuple
 
 import requests
 from bs4 import BeautifulSoup
 from dateutil import parser as date_parser
+
+from .header_audit import perform_technical_audit
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
@@ -188,14 +190,21 @@ def score_source_credibility(url: Optional[str], text: str, date_str: Optional[s
 
 def build_source(source_id: str, url: Optional[str], title: str, text: str,
                  date: Optional[str] = None, date_source: Optional[str] = None, kind: str = "url",
-                 is_official: bool = False):
-    """Construct a standardized source dictionary with deterministic credibility audit."""
+                 is_official: bool = False, raw_headers: Optional[dict] = None,
+                 status_code: Optional[int] = None, today: Optional[date] = None):
+    """Construct a standardized source dictionary with deterministic credibility audit and technical header check."""
     text = clean_text(text)
     truncated = len(text) > MAX_CHARS
     text = text[:MAX_CHARS]
 
+    # Perform deterministic technical and server header audit
+    tech_audit = perform_technical_audit(url, raw_headers=raw_headers, status_code=status_code, today=today)
+
     if not date:
         date, date_source = find_date_in_text(text)
+        if not date and tech_audit.get("last_modified"):
+            date = tech_audit["last_modified"]
+            date_source = "header:last-modified"
 
     credibility = score_source_credibility(url, text, date, kind, is_official)
 
@@ -206,6 +215,7 @@ def build_source(source_id: str, url: Optional[str], title: str, text: str,
         "kind": kind,
         "is_official": credibility["is_official_inferred"],
         "credibility": credibility,
+        "technical_audit": tech_audit,
         "ok": True,
         "text": text,
         "truncated": truncated,
@@ -277,13 +287,17 @@ def render_with_headless_browser(url: str, timeout: int = 15) -> Optional[str]:
     return None
 
 
-def fetch_url(url: str, source_id: str, is_official: bool = False):
+def fetch_url(url: str, source_id: str, is_official: bool = False, today: Optional[date] = None):
     """Fetch and parse a webpage or remote PDF with automatic dynamic/SPA JS rendering."""
     raw_html = None
+    response_headers = None
+    response_status = None
 
     # Step 1: Fast HTTP GET attempt
     try:
         r = requests.get(url, headers=HEADERS, timeout=15)
+        response_headers = dict(r.headers)
+        response_status = r.status_code
         if r.status_code == 200:
             ctype = r.headers.get("Content-Type", "").lower()
             if "pdf" in ctype or url.lower().split("?")[0].endswith(".pdf"):
@@ -291,7 +305,11 @@ def fetch_url(url: str, source_id: str, is_official: bool = False):
                     from pypdf import PdfReader
                     reader = PdfReader(io.BytesIO(r.content))
                     text = " ".join((page.extract_text() or "") for page in reader.pages)
-                    return build_source(source_id, url, url.split("/")[-1] or url, text, kind="pdf", is_official=is_official)
+                    return build_source(
+                        source_id, url, url.split("/")[-1] or url, text,
+                        kind="pdf", is_official=is_official,
+                        raw_headers=response_headers, status_code=response_status, today=today
+                    )
                 except Exception as e:
                     return {"id": source_id, "url": url, "ok": False, "error": f"PDF read failed: {e}"}
             raw_html = r.text
@@ -328,13 +346,13 @@ def fetch_url(url: str, source_id: str, is_official: bool = False):
     title = clean_text(soup.title.get_text()) if soup.title else url
 
     # Extract dates from meta tags
-    date, date_source = None, None
+    date_val, date_source = None, None
     for attr, key in META_DATE_KEYS:
         tag = soup.find("meta", attrs={attr: key})
         if tag and tag.get("content"):
             d = parse_date(tag["content"])
             if d:
-                date, date_source = d, f"meta:{key}"
+                date_val, date_source = d, f"meta:{key}"
                 break
 
     # Strip pure navigation chrome while preserving content
@@ -350,5 +368,9 @@ def fetch_url(url: str, source_id: str, is_official: bool = False):
             "error": f"Page at {url} contains insufficient text to evaluate information gaps."
         }
 
-    return build_source(source_id, url, title, text, date, date_source, kind="url", is_official=is_official)
+    return build_source(
+        source_id, url, title, text, date_val, date_source,
+        kind="url", is_official=is_official,
+        raw_headers=response_headers, status_code=response_status, today=today
+    )
 

@@ -13,8 +13,13 @@
   <!-- SoniX Bespoke Stylesheet -->
   <link rel="stylesheet" href="/public/css/sonix.css" />
 
-  <!-- Dashboard Layout & Component Stylesheet -->
-  <link rel="stylesheet" href="/public/css/dashboard.css" />
+  <!-- Modular SoniX & DarkSpot Component Stylesheets -->
+  <link rel="stylesheet" href="/public/css/variables.css" />
+  <link rel="stylesheet" href="/public/css/studio.css" />
+  <link rel="stylesheet" href="/public/css/results.css" />
+  <link rel="stylesheet" href="/public/css/viewer.css" />
+  <link rel="stylesheet" href="/public/css/history.css" />
+  <link rel="stylesheet" href="/public/css/print.css" />
 </head>
 
 <body>
@@ -97,8 +102,8 @@
           <span class="status-dot"></span>
           10-Stage Evidence Studio
         </div>
-        <h2>Ingest Question & Sources</h2>
-        <p>Enter the decision you need to make and supply 2 or more real sources to compare.</p>
+        <h2>Interrogate & Audit Decision Sources</h2>
+        <p>Search across circulars, uncover hidden trap clauses, and audit conflicting guidelines with 0-token deterministic precision.</p>
       </div>
 
       <div class="studio-card">
@@ -116,90 +121,190 @@
         </div>
 
         <div class="studio-card-body">
-          <!-- Field 1: Topic / Goal -->
+          <!-- Field 1: Command Search Capsule -->
           <div class="studio-field-block">
             <div class="studio-field-header">
-              <label for="topic" class="studio-field-label">Research Question or Decision Goal</label>
-              <span class="studio-field-hint">Defines criteria checklist for multi-source audit</span>
+              <label for="topic" class="studio-field-label">Research Goal / Decision Question</label>
+              <span class="studio-field-hint">Defines verification checklist & audit scope</span>
             </div>
-            <div class="studio-input-wrap">
-              <svg class="studio-input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input id="topic" class="studio-input" placeholder="e.g. ssc chsl form filling, NEET eligibility criteria, scholarship guidelines..." value="" />
+            
+            <div class="studio-search-capsule">
+              <div class="capsule-radar-icon" title="Comparative Radar Active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.3-4.3"></path>
+                  <circle cx="11" cy="11" r="3" stroke-dasharray="2 2"></circle>
+                </svg>
+              </div>
+              <input id="topic" class="capsule-input" 
+                     placeholder="Type or paste question (e.g. SSC CHSL Application Rules, Scholarship Eligibility, NEET Bond)..." 
+                     oninput="handleTopicInput(this)" 
+                     onkeydown="if(event.key==='Enter') focusNextOrAnalyze()" />
+              <div class="capsule-actions">
+                <button type="button" class="capsule-clear-btn" id="capsule-clear-btn" onclick="clearInput('topic')" title="Clear question">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+                <button type="button" class="capsule-btn-tool" onclick="pasteFromClipboard('topic')" title="Paste from clipboard">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                  <span>Paste</span>
+                </button>
+                <span class="capsule-kbd" title="Press Enter to proceed">↵ Enter</span>
+              </div>
             </div>
-            <div class="quick-examples">
-              <span class="quick-examples-label">Suggestions:</span>
-              <button type="button" class="example-chip" onclick="setTopic('SSC CHSL Examination Application Form')">SSC CHSL Form</button>
-              <button type="button" class="example-chip" onclick="setTopic('Post-Matric Scholarship Scheme Eligibility')">Scholarship Scheme</button>
-              <button type="button" class="example-chip" onclick="setTopic('NEET UG Eligibility Criteria')">NEET Eligibility</button>
+
+            <!-- 1-Click Interactive Test Scenarios -->
+            <div class="studio-presets-strip">
+              <span class="preset-chip-label">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                1-Click Scenarios:
+              </span>
+              <button type="button" class="preset-pill" onclick="loadDemoPreset('scholarship')">
+                <svg class="preset-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                <span>Post-Matric Scholarship</span>
+                <span class="pill-tag">Trap Clauses</span>
+              </button>
+              <button type="button" class="preset-pill" onclick="loadDemoPreset('ssc')">
+                <svg class="preset-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+                <span>SSC CHSL 2026 Notice</span>
+                <span class="pill-tag">Date Divergence</span>
+              </button>
+              <button type="button" class="preset-pill" onclick="loadDemoPreset('neet')">
+                <svg class="preset-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 3h2v4a3.5 3.5 0 0 0 7 0V3h2"/><path d="M8 10.5v1.75A5.75 5.75 0 0 0 13.75 18h.5a5.75 5.75 0 0 0 5.75-5.75V10"/><circle cx="20" cy="10" r="2"/></svg>
+                <span>NEET UG Eligibility</span>
+                <span class="pill-tag">Bond & Fees</span>
+              </button>
+              <button type="button" class="preset-pill" onclick="loadDemoPreset('upsc')">
+                <svg class="preset-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                <span>UPSC Civil Services</span>
+                <span class="pill-tag">Quota Rules</span>
+              </button>
             </div>
           </div>
 
           <!-- Field 2: Source Ingestion Deck -->
-          <div class="studio-field-block">
+          <div class="studio-field-block" style="margin-top: 22px;">
             <div class="studio-field-header">
               <label class="studio-field-label">Source Comparison Deck</label>
-              <span class="studio-field-hint">Supply 2 or more sources to contrast</span>
+              <span class="studio-field-hint">Supply 2 or more sources to contrast for inconsistencies</span>
             </div>
 
-            <!-- Segmented Pill Tabs -->
-            <div class="tab-pills">
-              <button type="button" class="tab-pill is-active" id="btn-tab-urls" onclick="switchSourceTab('urls')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                <span>Webpage URLs</span>
-              </button>
-              <button type="button" class="tab-pill" id="btn-tab-pasted" onclick="switchSourceTab('pasted')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
-                <span>Paste Notice / Document Text</span>
-              </button>
-            </div>
+            <div class="source-deck-card">
+              <!-- Segmented Deck Tabs -->
+              <div class="source-deck-tabs">
+                <button type="button" class="source-tab-btn is-active" id="btn-tab-urls" onclick="switchSourceTab('urls')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  <span>Webpage URLs</span>
+                  <span class="source-counter-pill" id="url-count-pill">0</span>
+                </button>
+                <button type="button" class="source-tab-btn" id="btn-tab-pasted" onclick="switchSourceTab('pasted')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                  <span>Paste Notice / Document Text</span>
+                  <span class="source-counter-pill" id="text-count-pill">0 w</span>
+                </button>
+                <button type="button" class="source-tab-btn" id="btn-tab-file" onclick="switchSourceTab('file')">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                  <span>Upload Circular File</span>
+                </button>
+              </div>
 
-            <!-- URL Input Panel -->
-            <div id="panel-urls">
-              <textarea id="urls" class="studio-textarea" rows="3" placeholder="Enter one webpage URL per line:&#10;https://ssc.gov.in&#10;https://example.com/notification-details"></textarea>
-              
-              <label class="official-toggle-chip">
-                <input type="checkbox" id="mark_official_url" checked />
-                <span class="toggle-label">Designate first URL (<b>S1</b>) as Official Authority (e.g. government portal / university notice for precedence ranking)</span>
-              </label>
-            </div>
+              <!-- Panel 1: URLs Input -->
+              <div id="panel-urls">
+                <textarea id="urls" class="source-textarea-enhanced" rows="4" 
+                          placeholder="Enter one webpage URL per line:&#10;https://ssc.gov.in/notice-2026&#10;https://example-education-advisory.com/chsl-updates"
+                          oninput="updateSourceMetrics()"></textarea>
+                
+                <div class="source-toolbar-sub">
+                  <div class="source-quick-actions">
+                    <span style="font-size: 11px; color: var(--muted); font-weight: 600;">Quick Add:</span>
+                    <button type="button" class="source-quick-btn" onclick="addPresetUrl('https://ssc.gov.in/portal/circulars')">+ SSC Portal</button>
+                    <button type="button" class="source-quick-btn" onclick="addPresetUrl('https://scholarships.gov.in/guidelines')">+ National Scholarships</button>
+                    <button type="button" class="source-quick-btn" onclick="pasteFromClipboard('urls')">📋 Paste</button>
+                    <button type="button" class="source-quick-btn" onclick="clearInput('urls')">Clear</button>
+                  </div>
+                  <div class="source-metrics-tag" id="url-metrics">0 URLs ready</div>
+                </div>
+              </div>
 
-            <!-- Pasted Text Input Panel -->
-            <div id="panel-pasted" style="display:none;">
-              <textarea id="pasted_text" class="studio-textarea" rows="5" placeholder="Paste the exact text of circulars, guidelines, or notice paragraphs here..."></textarea>
-              
-              <label class="official-toggle-chip">
-                <input type="checkbox" id="mark_official_pasted" />
-                <span class="toggle-label">Designate this document as Official Authority</span>
+              <!-- Panel 2: Pasted Text Input -->
+              <div id="panel-pasted" style="display:none;">
+                <textarea id="pasted_text" class="source-textarea-enhanced" rows="6" 
+                          placeholder="Paste circular, guideline, or notice paragraphs here... (You can paste Source 1 and Source 2 separated by headers or lines)"
+                          oninput="updateSourceMetrics()"></textarea>
+                
+                <div class="source-toolbar-sub">
+                  <div class="source-quick-actions">
+                    <button type="button" class="source-quick-btn" onclick="pasteFromClipboard('pasted_text')">📋 Paste Notice</button>
+                    <button type="button" class="source-quick-btn" onclick="loadDemoPreset('scholarship')">⚡ Load Sample Circular</button>
+                    <button type="button" class="source-quick-btn" onclick="clearInput('pasted_text')">Clear</button>
+                  </div>
+                  <div class="source-metrics-tag" id="text-metrics">0 words · 0 characters</div>
+                </div>
+              </div>
+
+              <!-- Panel 3: Drag & Drop File Upload -->
+              <div id="panel-file" style="display:none;">
+                <div class="source-dropzone" id="source-dropzone" onclick="document.getElementById('circular-file-input').click()">
+                  <div class="dropzone-icon">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                  </div>
+                  <div class="dropzone-title">Drop Circular or Guideline Document Here</div>
+                  <div class="dropzone-subtitle">Supports .txt, .md, or exported .json files (Click to browse)</div>
+                  <input type="file" id="circular-file-input" accept=".txt,.md,.json" style="display:none;" onchange="handleCircularFileUpload(this)" />
+                </div>
+              </div>
+
+              <!-- Official Precedence Switch Card -->
+              <label class="official-precedence-card">
+                <div class="precedence-info">
+                  <div class="precedence-icon">🛡️</div>
+                  <div>
+                    <div class="precedence-title">
+                      <span>Official Precedence Standard</span>
+                      <span class="precedence-badge">High Precedence</span>
+                    </div>
+                    <div class="precedence-desc">
+                      Designate Source 1 as the legal standard. Secondary sources will be audited for divergence against S1.
+                    </div>
+                  </div>
+                </div>
+                <div class="switch-ui">
+                  <input type="checkbox" id="mark_official_active" checked />
+                  <span class="switch-slider"></span>
+                </div>
               </label>
             </div>
           </div>
 
-          <!-- Action Bar -->
-          <div class="studio-action-row">
-            <button class="button button-dark" style="min-width: 210px;" onclick="runAnalysis()">
-              <span>Analyze Dark Spots</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
+          <!-- Heroic Action Row -->
+          <div class="studio-action-row-enhanced">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+              <button class="analyze-btn-heroic" onclick="runAnalysis()">
+                <div class="btn-shine-bar"></div>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Audit & Identify Dark Spots</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </button>
 
-            <div class="studio-action-divider"></div>
+              <div class="studio-readiness-pill" id="studio-readiness-pill">
+                <span>○ Awaiting question & sources...</span>
+              </div>
+            </div>
 
-            <div>
-              <label for="file" class="custom-file-btn">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <label for="file" class="custom-file-btn" title="Load a previously saved audit export">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-                <span id="load-file-label">Load Saved JSON Export</span>
+                <span id="load-file-label">Import JSON</span>
               </label>
               <input type="file" id="file" accept=".json" style="display:none;" onchange="loadFile(this)">
-            </div>
 
-            <div>
-              <button type="button" class="custom-file-btn" onclick="openHistoryDrawer()">
+              <button type="button" class="custom-file-btn" onclick="openHistoryDrawer()" title="View previously conducted audits">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span>Saved Snapshots (<span id="history-studio-count">0</span>)</span>
+                <span>History (<span id="history-studio-count">0</span>)</span>
               </button>
             </div>
           </div>
 
-          <!-- Live Status / Message -->
+          <!-- Live Status / Message Bar -->
           <div id="status-bar" style="margin-top: 16px; font-size: 13px; display: none;"></div>
         </div>
       </div>
@@ -419,7 +524,7 @@
     </div>
 
     <div class="history-drawer-subheader">
-      <span>Auto-saved in your browser. 1-click 0-second reload without server tokens.</span>
+      <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 4px;"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Private to your browser (localStorage). Zero cross-user data sharing.</span>
     </div>
 
     <div class="history-drawer-list" id="history-drawer-list">

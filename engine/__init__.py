@@ -12,6 +12,7 @@ from .outdated import check_sources, check_findings
 from .priority import build_verify_list
 from .entities import extract_critical_entities, compare_entities_across_sources
 from .traps import scan_trap_clauses, scan_all_sources_for_traps
+from .header_audit import perform_technical_audit, audit_url_security_and_trust, audit_http_headers
 from .llm import call_llm, call_llm_json, _parse_json
 from .mock_llm import mock_response
 
@@ -34,6 +35,9 @@ __all__ = [
     "compare_entities_across_sources",
     "scan_trap_clauses",
     "scan_all_sources_for_traps",
+    "perform_technical_audit",
+    "audit_url_security_and_trust",
+    "audit_http_headers",
     "call_llm",
     "call_llm_json",
     "_parse_json",
