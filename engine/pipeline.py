@@ -1,4 +1,4 @@
-"""pipeline.py: The 10-stage execution pipeline for Digital Dark Spot.
+"""pipeline.py: The 10-stage execution pipeline for Denoy.
 Orchestrates AI extraction, deterministic code verification, conflict comparison,
 outdated signals, and prioritized verify-next ranking into a unified data contract.
 """
@@ -31,7 +31,7 @@ def run_analysis(
     today: Optional[date] = None,
     on_progress: Optional[Callable[[int, str], None]] = None
 ):
-    """Run the 10-stage Digital Dark Spot analysis.
+    """Run the 10-stage Denoy analysis.
     
     Args:
         topic: The research question or topic string.

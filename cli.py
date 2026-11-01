@@ -1,4 +1,4 @@
-"""cli.py: Rich interactive terminal interface for Digital Dark Spot.
+"""cli.py: Rich interactive terminal interface for Denoy.
 Renders the complete 10-stage gap detection pipeline with beautiful tables,
 coverage matrices, side-by-side conflict comparisons, and prioritized verify checklists.
 """
@@ -23,7 +23,7 @@ console = Console()
 def render_banner():
     """Display the title banner."""
     title_text = Text()
-    title_text.append("DIGITAL DARK SPOT\n", style="bold cyan")
+    title_text.append("DENOY\n", style="bold cyan")
     title_text.append("AI-Assisted Information Gap & Contradiction Detection Platform\n", style="bold white")
     title_text.append("Comparison Engine  •  Mechanical Quote Verification  •  Action-Oriented Ranking", style="dim italic")
 
@@ -508,7 +508,7 @@ def interactive_mode():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Digital Dark Spot - AI Information Gap Detection Platform")
+    parser = argparse.ArgumentParser(description="Denoy - AI Information Gap Detection Platform")
     parser.add_argument("topic", nargs="?", default="", help="Research question or topic to evaluate")
     parser.add_argument("--url", action="append", default=[], help="Webpage URL to include as a source")
     parser.add_argument("--text", action="append", default=[], help="Local file path (.txt, .md, .pdf) as a source")

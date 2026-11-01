@@ -1,4 +1,4 @@
-"""app.py: FastAPI REST server for Digital Dark Spot.
+"""app.py: FastAPI REST server for Denoy.
 Serves the 10-stage analysis engine via clean REST endpoints and dashboard UI.
 """
 from fastapi import FastAPI
@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from engine import run_analysis
 
-app = FastAPI(title="Digital Dark Spot API", version="1.0.0")
+app = FastAPI(title="Denoy API", version="1.0.0")
 
 # Enable CORS for frontend integration
 app.add_middleware(

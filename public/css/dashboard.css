@@ -2,13 +2,13 @@
  * dashboard.css: Master stylesheet bundling modular style components.
  * 
  * Modular Architecture:
- * 1. variables.css - SoniX color tokens, typography fonts, baseline layout
+ * 1. variables.css - Denoy color tokens, typography fonts, baseline layout
  * 2. studio.css    - Ingestion console, search capsule, presets, source deck
  * 3. results.css   - Intelligence console, metrics, diffs, matrix, tech audit
  * 4. viewer.css    - Interactive source reader drawer & in-text highlighter
  * 5. history.css   - Local snapshot history drawer and cards
  * 6. print.css     - Custom inspection dossier PDF & print media layout
- * 7. dark.css      - SoniX luxury dark mode overrides and theme tokens
+ * 7. dark.css      - Denoy luxury dark mode overrides and theme tokens
  */
 
 @import url("variables.css");

@@ -153,7 +153,7 @@
       if (officialSwitch) officialSwitch.checked = preset.isOfficial;
 
       updateSourceMetrics();
-      setStatus(`[Preset Loaded] "${preset.topic}" with contrasting circulars loaded. Click "Audit & Identify Dark Spots" to analyze!`);
+      setStatus(`[Preset Loaded] "${preset.topic}" with contrasting circulars loaded. Click "Audit & Identify Knowledge Gaps" to analyze!`);
     }
 
     function switchSourceTab(mode) {
@@ -340,7 +340,7 @@
         saveSnapshotToHistory(R, topic, urls, pastedRaw);
         updateStepper(10);
         render();
-        setStatus("[Complete] Analysis complete. All dark spots identified below.");
+        setStatus("[Complete] Analysis complete. All knowledge gaps and contradictions identified below.");
         document.getElementById('results-container').scrollIntoView({ behavior: 'smooth' });
       } catch (e) {
         setStatus("[Error] Execution failure: " + e.message, true);
@@ -382,7 +382,7 @@
       const blob = new Blob([JSON.stringify(R, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `darkspot-${(R.topic || 'analysis').slice(0, 30).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.json`;
+      a.download = `denoy-${(R.topic || 'analysis').slice(0, 30).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.json`;
       a.click();
     }
 
@@ -390,12 +390,12 @@
       if (!R) return;
       const topic = R.topic || "Analysis";
       const sources = R.sources || [];
-      const darkSpots = R.dark_spots || [];
+      const gaps = R.gaps || R.dark_spots || [];
       const conflicts = R.conflicts || [];
-      const outdated = R.outdated_signals || [];
+      const outdated = R.outdated_signals || R.outdated || [];
       const verifyNext = R.verify_next || [];
 
-      let md = "# DarkSpot Verification Audit Dossier\n\n";
+      let md = "# Denoy Verification Audit Dossier\n\n";
       md += "**Target Topic:** " + topic + "\n";
       md += "**Audit Date:** " + (R.run_date || new Date().toISOString().slice(0, 10)) + "\n";
       md += "**Inspection Engine:** 10-Stage Comparative Pipeline (Groq AI and Deterministic Heuristics)\n\n";
@@ -403,7 +403,7 @@
 
       md += "## Executive Metrics\n";
       md += "- **Reviewed Sources:** " + sources.length + "\n";
-      md += "- **Identified Information Gaps:** " + darkSpots.length + "\n";
+      md += "- **Identified Information Gaps:** " + gaps.length + "\n";
       md += "- **Detected Source Conflicts:** " + conflicts.length + "\n";
       md += "- **Outdated Warnings:** " + outdated.length + "\n";
       md += "- **Action Verification Items:** " + verifyNext.length + "\n\n";
@@ -418,12 +418,12 @@
       md += "\n";
 
       md += "## 2. Information Gaps (Missing Criteria)\n";
-      if (!darkSpots.length) {
+      if (!gaps.length) {
         md += "*No critical information gaps identified across reviewed sources.*\n\n";
       } else {
-        darkSpots.forEach(g => {
-          md += "### [" + (g.severity || "medium").toUpperCase() + "] " + (g.field || "Criterion") + "\n";
-          md += "- **Impact:** " + (g.impact || "Information missing from all reviewed sources.") + "\n";
+        gaps.forEach(g => {
+          md += "### [" + (g.severity || "medium").toUpperCase() + "] " + (g.field || g.label || "Criterion") + "\n";
+          md += "- **Why it matters:** " + (g.why || g.impact || "Information missing from all reviewed sources.") + "\n";
           if (g.missing_from && g.missing_from.length) {
             md += "- **Omitted In:** " + g.missing_from.join(", ") + "\n";
           }
@@ -436,13 +436,17 @@
         md += "*No direct source contradictions detected.*\n\n";
       } else {
         conflicts.forEach(c => {
-          md += "### [" + (c.severity || "high").toUpperCase() + "] " + (c.field || "Criterion") + "\n";
-          md += "- **Comparison:** Source **" + c.source_a + "** states:\n";
-          md += "  > \"" + (c.claim_a || "") + "\"\n";
-          md += "- **Versus:** Source **" + c.source_b + "** states:\n";
-          md += "  > \"" + (c.claim_b || "") + "\"\n";
-          if (c.resolution) {
-            md += "- **Resolution Advice:** " + c.resolution + "\n";
+          const aTitle = (c.a && c.a.source_title) || c.source_a || "Source A";
+          const bTitle = (c.b && c.b.source_title) || c.source_b || "Source B";
+          const aQuote = (c.a && (c.a.quote || c.a.value)) || c.claim_a || "";
+          const bQuote = (c.b && (c.b.quote || c.b.value)) || c.claim_b || "";
+          md += "### [" + (c.severity || "high").toUpperCase() + "] " + (c.field || c.label || "Criterion") + "\n";
+          md += "- **Comparison:** Source **" + aTitle + "** states:\n";
+          md += "  > \"" + aQuote + "\"\n";
+          md += "- **Versus:** Source **" + bTitle + "** states:\n";
+          md += "  > \"" + bQuote + "\"\n";
+          if (c.explanation || c.resolution) {
+            md += "- **Assessment:** " + (c.explanation || c.resolution) + "\n";
           }
           md += "\n";
         });
@@ -464,7 +468,7 @@
       const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `darkspot-audit-${topic.slice(0, 30).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.md`;
+      a.download = `denoy-audit-${topic.slice(0, 30).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.md`;
       a.click();
     }
 
@@ -501,13 +505,13 @@
     function copyChecklistToClipboard() {
       if (!R || !R.verify_next || !R.verify_next.length) return;
       const checkboxes = document.querySelectorAll('.verify-check');
-      let text = `DarkSpot Action Steps: ${R.topic || "Investigation"}\n\n`;
+      let text = `Denoy Action Steps: ${R.topic || "Investigation"}\n\n`;
       R.verify_next.forEach((v, idx) => {
         const isChecked = checkboxes[idx] ? checkboxes[idx].checked : false;
         const mark = isChecked ? "[x]" : "[ ]";
         text += `${mark} [${v.priority}] [${(v.type || "VERIFY").toUpperCase()}] ${v.field}: ${v.action}\n`;
       });
-      text += `\nAudit report generated by DarkSpot. Zero tokens consumed.`;
+      text += `\nAudit report generated by Denoy. Zero tokens consumed.`;
 
       navigator.clipboard.writeText(text).then(() => {
         const label = document.getElementById('copy-checklist-label');
@@ -1111,7 +1115,7 @@
       }
       setMatrixFilter('all');
 
-      // 4. Panel 2: Dark Spots / Gaps (Dense Table)
+      // 4. Panel 2: Knowledge Gaps (Dense Table)
       const gapsList = document.getElementById('gaps-list');
       if (!R.gaps || !R.gaps.length) {
         gapsList.innerHTML = `<div class="all-clear-notice is-centered">[All Clear] No information gaps detected. All expected decision criteria were addressed in the sources.</div>`;
@@ -2052,7 +2056,7 @@
       `;
     }
 
-    // SoniX Privacy Modal Handlers
+    // Denoy Privacy Modal Handlers
     function openPrivacyModal() {
       const modal = document.getElementById('privacy-modal');
       if (modal) {
@@ -2078,7 +2082,7 @@
     // -------------------------------------------------------------
     // Local History & Snapshot Restore (Browser localStorage)
     // -------------------------------------------------------------
-    const HISTORY_STORAGE_KEY = "darkspot_history";
+    const HISTORY_STORAGE_KEY = "denoy_history";
 
     function getHistoryList() {
       try {
@@ -2102,7 +2106,7 @@
           dateStr: formattedDate,
           topic: cleanTopic,
           sourceCount: (report.sources || []).length,
-          gapCount: (report.dark_spots || []).length,
+          gapCount: (report.gaps || report.dark_spots || []).length,
           conflictCount: (report.conflicts || []).length,
           data: report,
           urlsText: Array.isArray(urls) ? urls.join('\n') : (urls || ""),
@@ -2253,10 +2257,10 @@
     // -------------------------------------------------------------
     // Theme Management (Light / Dark Mode)
     // -------------------------------------------------------------
-    const THEME_STORAGE_KEY = "sonix_theme";
+    const THEME_STORAGE_KEY = "denoy_theme";
 
     function getCurrentTheme() {
-      return document.documentElement.getAttribute('data-theme') || 'light';
+      return document.documentElement.getAttribute('data-theme') || localStorage.getItem(THEME_STORAGE_KEY) || 'light';
     }
 
     function applyTheme(theme) {

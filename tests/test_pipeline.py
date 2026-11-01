@@ -1,4 +1,4 @@
-"""tests/test_pipeline.py: Automated tests for Digital Dark Spot.
+"""tests/test_pipeline.py: Automated tests for Denoy.
 Validates the mechanical trust layer, gap detection, contradiction detection,
 outdated signals, and prioritization algorithms against the Section 14 Testing Checklist.
 """

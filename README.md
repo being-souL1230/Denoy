@@ -1,6 +1,6 @@
 <div align="center">
 
-# Digital Dark Spot
+# Denoy
 
 ### Find out what the websites you are reading do *not* tell you.
 
@@ -29,13 +29,13 @@ Riya wants to apply for a scholarship. She opens four websites and thinks she un
 
 Search engines only find links. AI summarizers squeeze pages into smooth paragraphs and often hide the disagreements or invent the missing parts.
 
-**Digital Dark Spot audits your sources like a careful fact-checker.** It reads them side by side, shows the gaps and conflicts, proves every claim with the original sentence, and gives you a ranked to-do list.
+**Denoy audits your sources like a careful fact-checker.** It reads them side by side, shows the gaps and conflicts, proves every claim with the original sentence, and gives you a ranked to-do list.
 
 ---
 
 ## 2. What it finds
 
-| # | Dark spot | Meaning | Example |
+| # | Knowledge Gap Type | Meaning | Example |
 | :-: | :--- | :--- | :--- |
 | 1 | **Gap** | An important question that none of your sources answers | "Renewal rules not found in the sources reviewed" |
 | 2 | **Conflict** | Two sources give different facts | "Deadline is 30 June in one page, 31 March in another" |
@@ -211,7 +211,7 @@ In plain words:
 
 ## 9. How it compares
 
-| Capability | Search engine | AI summarizer | Digital Dark Spot |
+| Capability | Search engine | AI summarizer | Denoy |
 | :--- | :-: | :-: | :-: |
 | Find relevant links | Yes | No | **Yes** |
 | Spot contradictions between sources | No | Rarely | **Yes** |
@@ -339,6 +339,6 @@ Denoy/
 
 Built for the **Shinchan Online Hackathon 2026**
 
-*Find the dark spots before they find you.*
+*Verify critical claims and spot information gaps with Denoy.*
 
 </div>

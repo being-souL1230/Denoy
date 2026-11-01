@@ -1,4 +1,4 @@
-"""priority.py: Prioritizes all detected dark spots into a single actionable checklist.
+"""priority.py: Prioritizes all detected knowledge gaps and contradictions into a single actionable checklist.
 Transforms gaps, conflicts, outdated signals, and uncertain findings into an ordered,
 ranked list of what to verify next (P1, P2, P3).
 """

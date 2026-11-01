@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#e4ede3" />
-  <title>Digital Dark Spot - AI-Assisted Information Gap & Contradiction Detection</title>
+  <title>Denoy - AI-Assisted Information Gap & Contradiction Detection</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Manrope:wght@400..800&display=swap" rel="stylesheet" />
   
-  <!-- SoniX Bespoke Stylesheet -->
-  <link rel="stylesheet" href="/public/css/sonix.css" />
+  <!-- Denoy Bespoke Stylesheet -->
+  <link rel="stylesheet" href="/public/css/denoy.css" />
 
-  <!-- Modular SoniX & DarkSpot Component Stylesheets -->
+  <!-- Modular Denoy Component Stylesheets -->
   <link rel="stylesheet" href="/public/css/variables.css" />
   <link rel="stylesheet" href="/public/css/studio.css" />
   <link rel="stylesheet" href="/public/css/results.css" />
@@ -26,7 +26,7 @@
   <script>
     (function() {
       try {
-        var stored = localStorage.getItem('sonix_theme');
+        var stored = localStorage.getItem('denoy_theme');
         var theme = stored || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', theme);
       } catch (e) {}
@@ -38,7 +38,9 @@
         var cur = html.getAttribute('data-theme') || 'light';
         var next = cur === 'dark' ? 'light' : 'dark';
         html.setAttribute('data-theme', next);
-        try { localStorage.setItem('sonix_theme', next); } catch(err) {}
+        try { 
+          localStorage.setItem('denoy_theme', next); 
+        } catch(err) {}
         updateThemeUI(next);
       } catch (e) {
         console.error("Theme toggle failed:", e);
@@ -65,16 +67,16 @@
 </head>
 
 <body>
-  <!-- Header with SoniX Brand & Navigation -->
+  <!-- Header with Denoy Brand & Navigation -->
   <header class="site-header">
     <div class="nav-wrap">
-      <a href="/" class="brand-link">
+      <a href="/" class="brand-link" aria-label="Denoy home">
         <span class="brand">
           <svg width="34" height="34" viewBox="0 0 40 40" fill="currentColor">
             <path d="M20 2C10.059 2 2 10.059 2 20s8.059 18 18 18 18-8.059 18-18S29.941 2 20 2zm0 6c6.627 0 12 5.373 12 12s-5.373 12-12 12S8 26.627 8 20 13.373 8 20 8z" opacity="0.3"/>
             <path d="M20 10a10 10 0 100 20 10 10 0 000-20zm0 4a6 6 0 110 12 6 6 0 010-12z" />
           </svg>
-          DarkSpot<span class="brand-period">.</span>
+          Denoy<span class="brand-period">.</span>
         </span>
       </a>
 
@@ -118,7 +120,7 @@
         </h1>
 
         <p class="hero-description">
-          Search engines find pages. Summarizers compress them. <b>DarkSpot</b> is a comparison engine that reveals what is missing (Gaps), where sources contradict each other, and what is out of date before you make high-stakes decisions.
+          Search engines find pages. Summarizers compress them. <b>Denoy</b> is a comparison engine that reveals what is missing (Gaps), where sources contradict each other, and what is out of date before you make high-stakes decisions.
         </p>
 
         <div class="hero-cta">
@@ -134,7 +136,7 @@
         </div>
       </div>
 
-      <!-- SoniX Hero Artwork Plane -->
+      <!-- Denoy Hero Artwork Plane -->
       <div class="hero-art">
         <img src="/images/pastel-orbital-compass-hub.png" alt="Pastel Orbital Compass Hub" class="hero-world" onerror="this.style.display='none'" />
       </div>
@@ -330,7 +332,7 @@
               <button class="analyze-btn-heroic" onclick="runAnalysis()">
                 <div class="btn-shine-bar"></div>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                <span>Audit & Identify Dark Spots</span>
+                <span>Audit & Identify Knowledge Gaps</span>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </button>
 
@@ -378,7 +380,7 @@
       </div>
     </div>
 
-    <!-- 3. Unified Compact SoniX Intelligence Console -->
+    <!-- 3. Unified Compact Denoy Intelligence Console -->
     <div id="results-container" class="intel-console" style="display: none;">
       
       <!-- Console Top Bar -->
@@ -409,7 +411,7 @@
       <!-- Compact Inline Metrics Strip (Zero bloated cards) -->
       <div class="intel-metrics-strip" id="metrics-strip"></div>
 
-      <!-- SoniX Navigation Tabs (Switch effortlessly without vertical bloat) -->
+      <!-- Denoy Navigation Tabs (Switch effortlessly without vertical bloat) -->
       <div class="intel-nav-tabs">
         <button type="button" class="intel-tab is-active" id="tab-overview" onclick="switchIntelTab('overview')">
           <span>Overview & Summary</span>
@@ -536,18 +538,18 @@
     </div>
   </main>
 
-  <!-- SoniX Full Luxury Footer -->
+  <!-- Denoy Full Luxury Footer -->
   <footer class="site-footer">
     <div class="container">
       <div class="footer-main">
         <div class="footer-brand">
-          <a href="#overview" class="brand-link" aria-label="DarkSpot home">
+          <a href="#overview" class="brand-link" aria-label="Denoy home">
             <span class="brand" style="font-size: 24px;">
               <svg width="28" height="28" viewBox="0 0 40 40" fill="currentColor">
                 <path d="M20 2C10.059 2 2 10.059 2 20s8.059 18 18 18 18-8.059 18-18S29.941 2 20 2zm0 6c6.627 0 12 5.373 12 12s-5.373 12-12 12S8 26.627 8 20 13.373 8 20 8z" opacity="0.3"/>
                 <path d="M20 10a10 10 0 100 20 10 10 0 000-20zm0 4a6 6 0 110 12 6 6 0 010-12z" />
               </svg>
-              DarkSpot<span class="brand-period">.</span>
+              Denoy<span class="brand-period">.</span>
             </span>
           </a>
           <p>See what your sources do not tell you. AI-assisted comparison engine revealing information gaps and conflicting criteria.</p>
@@ -557,7 +559,7 @@
         </button>
       </div>
       <div class="footer-bottom">
-        <span>&copy; 2026 DarkSpot. Deterministic web security and source authority heuristics.</span>
+        <span>&copy; 2026 Denoy. Deterministic web security and source authority heuristics.</span>
         <span>Made for critical decisions. Zero black-box trust.</span>
       </div>
     </div>
@@ -565,7 +567,7 @@
 
 
 
-  <!-- SoniX Left History & Snapshot Drawer -->
+  <!-- Denoy Left History & Snapshot Drawer -->
   <div id="history-backdrop" class="history-backdrop" style="display: none;" onclick="closeHistoryDrawer()"></div>
   <aside id="history-drawer" class="history-drawer" aria-label="Comparison History Drawer">
     <div class="history-drawer-header">
@@ -597,7 +599,7 @@
     </div>
   </aside>
 
-  <!-- SoniX Privacy & Data Architecture Modal -->
+  <!-- Denoy Privacy & Data Architecture Modal -->
   <div id="privacy-modal" class="modal-backdrop" style="display: none;" onclick="handleModalBackdropClick(event)">
     <div class="modal-panel modal-compact" role="dialog" aria-modal="true" aria-labelledby="privacy-modal-title" tabindex="-1">
       <div class="modal-topbar">
@@ -619,19 +621,19 @@
           </span>
           <p class="eyebrow">Privacy & Data Architecture</p>
           <h2>Your research stays private.<br />Audit records remain transparent.</h2>
-          <p>DarkSpot operates on a <strong>local-first, zero-telemetry architecture</strong> designed for students, job applicants, and researchers verifying high-stakes circulars. We require zero user accounts, zero passwords, and zero personal tracking cookies.</p>
+          <p>Denoy operates on a <strong>local-first, zero-telemetry architecture</strong> designed for students, job applicants, and researchers verifying high-stakes circulars. We require zero user accounts, zero passwords, and zero personal tracking cookies.</p>
 
           <h3>1. Zero User Accounts, Zero Logins, and Zero Tracking Cookies</h3>
-          <p>You never need to create an account, provide an email address, or disclose personal identity to use DarkSpot. We do not set analytics trackers, advertising beacons, or surveillance cookies in your browser. Every investigation session runs in complete anonymity.</p>
+          <p>You never need to create an account, provide an email address, or disclose personal identity to use Denoy. We do not set analytics trackers, advertising beacons, or surveillance cookies in your browser. Every investigation session runs in complete anonymity.</p>
 
           <h3>2. What Stays Strictly on Your Device (Local Memory and Storage)</h3>
-          <p>Your research goals, candidate webpage URLs, pasted notice paragraphs, and generated inspection matrices reside strictly within your active browser session memory (<code>localStorage</code> and transient memory). DarkSpot does not maintain persistent database logs of your search history, and no third-party analytics tool monitors your queries.</p>
+          <p>Your research goals, candidate webpage URLs, pasted notice paragraphs, and generated inspection matrices reside strictly within your active browser session memory (<code>localStorage</code> and transient memory). Denoy does not maintain persistent database logs of your search history, and no third-party analytics tool monitors your queries.</p>
 
           <h3>3. AI Synthesis and Cloud Processing (Groq API)</h3>
           <p>When you initiate an investigation, the system transmits only the sanitized research question and extracted circular paragraphs to the Groq Cloud API for criteria extraction and contradiction synthesis. No user identifiers, device fingerprints, or IP addresses are attached to these calls. Under standard API developer terms, prompts are processed transiently and are never retained to train frontier models.</p>
 
           <h3>4. Verifiable Quote Integrity (Zero Hallucination Guarantee)</h3>
-          <p>DarkSpot never generates fabricated claims. Every single quote cited in the Coverage Matrix, Conflict Dossier, and Action Checklist is verified character-by-character against original ingested source text by deterministic verification code before being presented to you.</p>
+          <p>Denoy never generates fabricated claims. Every single quote cited in the Coverage Matrix, Conflict Dossier, and Action Checklist is verified character-by-character against original ingested source text by deterministic verification code before being presented to you.</p>
 
           <h3>5. Full Data Control, Instant Reset, and Offline Export</h3>
           <p>You retain complete sovereignty over your research dossier. You can export your full findings at any moment as a portable JSON file. Closing or refreshing the page purges runtime analysis state immediately. You can also wipe active data at any point.</p>
