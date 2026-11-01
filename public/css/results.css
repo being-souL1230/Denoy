@@ -1270,15 +1270,14 @@ tr.is-done .checklist-action {
 /* SVG Wrapper & Canvas */
 .gap-graph-svg-wrap {
   overflow-x: auto;
+  overflow-y: visible;
   padding: 18px;
   background: #fbfdfa;
   position: relative;
-  min-height: 480px;
 }
 .gap-graph-svg {
   display: block;
   width: 100%;
-  height: auto;
   min-width: 860px;
   user-select: none;
 }

@@ -1544,6 +1544,19 @@
     let selectedGraphNode = null;
     let graphSearchQuery = '';
 
+    // ── Data contract helpers ──────────────────────────────────────────────────
+    // Backend uses `label_type` (not `status`) on findings.
+    // Checklist items use `key` (not `field`).
+    // Gaps & conflicts use `field_key` (not `field`).
+    function isSourced(finding) {
+      if (!finding) return false;
+      return finding.label_type === 'sourced' || finding.status === 'sourced' || finding.match === 'exact' || finding.match === 'fuzzy';
+    }
+    function getFieldKey(obj) {
+      // Works for checklist items (key), findings/gaps/conflicts (field_key), or legacy (field)
+      return obj.key || obj.field_key || obj.field || null;
+    }
+
     function setGraphFilter(f) {
       currentGraphFilter = f;
       ['all', 'gaps', 'conflicts', 'sourced'].forEach(k => {
@@ -1680,10 +1693,10 @@
       const conflicts = R.conflicts || [];
 
       if (type === 'crit') {
-        const crit = checklist.find(c => c.field === id) || { field: id, label: id, importance: 'HIGH', why: '' };
-        const critGaps = gaps.filter(g => g.field === id);
-        const critConflicts = conflicts.filter(c => c.field === id);
-        const critFindings = findings.filter(f => f.field === id);
+        const crit = checklist.find(c => getFieldKey(c) === id) || { key: id, label: id, importance: 'medium', why: '' };
+        const critGaps = gaps.filter(g => getFieldKey(g) === id);
+        const critConflicts = conflicts.filter(c => getFieldKey(c) === id);
+        const critFindings = findings.filter(f => getFieldKey(f) === id);
         const hasGap = critGaps.length > 0;
         const hasConflict = critConflicts.length > 0;
 
@@ -1739,17 +1752,17 @@
 
         const sourceCards = sources.map(s => {
           const f = critFindings.find(find => find.source_id === s.id);
-          const isSourced = f && f.status === 'sourced';
-          const boxClass = isSourced ? 'box-sourced' : (hasConflict ? 'box-conflict' : 'box-gap');
+          const srcSourced = isSourced(f);
+          const boxClass = srcSourced ? 'box-sourced' : (hasConflict ? 'box-conflict' : 'box-gap');
           return `
             <div class="inspector-source-box ${boxClass}">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                 <b style="font-size:12px; color:var(--ink);">${esc(s.title || s.id)}</b>
-                <span class="cell-badge ${isSourced ? 'badge-sourced' : (hasConflict ? 'badge-conflict' : 'badge-miss')}">
-                  ${isSourced ? 'SOURCED' : (hasConflict ? 'DISPUTED' : 'MISSING')}
+                <span class="cell-badge ${srcSourced ? 'badge-sourced' : (hasConflict ? 'badge-conflict' : 'badge-miss')}">
+                  ${srcSourced ? 'SOURCED' : (hasConflict ? 'DISPUTED' : 'MISSING')}
                 </span>
               </div>
-              ${isSourced ? `
+              ${srcSourced ? `
                 <div style="font-size:12px; color:var(--ink); line-height:1.4; margin-bottom:6px; font-style:italic;">
                   "${esc(f.quote || f.value || '')}"
                 </div>
@@ -1770,9 +1783,9 @@
                 <h4 class="inspector-title">
                   <span>${esc(crit.label)}</span>
                   ${statusBadge}
-                  <span class="cell-badge" style="background:#eef2ff; color:#3730a3; font-size:10px;">${esc(crit.importance || 'HIGH')} PRIORITY</span>
+                  <span class="cell-badge" style="background:#eef2ff; color:#3730a3; font-size:10px;">${esc((crit.importance || 'medium').toUpperCase())} PRIORITY</span>
                 </h4>
-                <div style="font-size:12px; color:var(--muted); margin-top:2px;">Checklist ID: <code>${esc(crit.field)}</code></div>
+                <div style="font-size:12px; color:var(--muted); margin-top:2px;">Checklist ID: <code>${esc(crit.key || crit.field || id)}</code></div>
               </div>
               <button class="inspector-close-btn" onclick="clearGraphSelection()" title="Close Inspector">&times;</button>
             </div>
@@ -1789,7 +1802,7 @@
         const cred = s.credibility || {};
         const sourceTech = s.technical_audit || {};
         const sourceFindings = findings.filter(f => f.source_id === id);
-        const sourcedCount = sourceFindings.filter(f => f.status === 'sourced').length;
+        const sourcedCount = sourceFindings.filter(f => isSourced(f)).length;
         const totalCriteria = checklist.length;
 
         container.innerHTML = `
@@ -1822,15 +1835,16 @@
             <div style="font-size:12px; font-weight:700; color:var(--ink); margin-bottom:8px;">Checklist Coverage from this Source:</div>
             <div class="inspector-grid">
               ${checklist.map(c => {
-                const f = sourceFindings.find(find => find.field === c.field);
-                const isSourced = f && f.status === 'sourced';
+                const ck = getFieldKey(c);
+                const f = sourceFindings.find(find => getFieldKey(find) === ck);
+                const srcSourced = isSourced(f);
                 return `
-                  <div class="inspector-source-box ${isSourced ? 'box-sourced' : 'box-gap'}" style="cursor:pointer;" onclick="selectGraphNode('crit', '${c.field}')">
+                  <div class="inspector-source-box ${srcSourced ? 'box-sourced' : 'box-gap'}" style="cursor:pointer;" onclick="selectGraphNode('crit', '${esc(ck)}')">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
                       <b style="font-size:12px; color:var(--ink);">${esc(c.label)}</b>
-                      <span class="cell-badge ${isSourced ? 'badge-sourced' : 'badge-miss'}">${isSourced ? 'SOURCED' : 'GAP'}</span>
+                      <span class="cell-badge ${srcSourced ? 'badge-sourced' : 'badge-miss'}">${srcSourced ? 'SOURCED' : 'GAP'}</span>
                     </div>
-                    ${isSourced ? `<div style="font-size:11.5px; color:var(--muted); font-style:italic;">"${esc(f.quote || f.value || '')}"</div>` : `<div style="font-size:11px; color:var(--muted);">Missing from this source</div>`}
+                    ${srcSourced ? `<div style="font-size:11.5px; color:var(--muted); font-style:italic;">"${esc(f.quote || f.value || '')}"</div>` : `<div style="font-size:11px; color:var(--muted);">Missing from this source</div>`}
                   </div>
                 `;
               }).join('')}
@@ -1879,22 +1893,24 @@
       const critYMap = {};
       const critStatusMap = {};
       checklist.forEach((c, idx) => {
+        const ck = getFieldKey(c);
+        if (!ck) return;
         const cy = topMargin + idx * rowHeight + 26;
-        critYMap[c.field] = cy;
+        critYMap[ck] = cy;
 
-        if (conflicts.some(cf => cf.field === c.field)) {
-          critStatusMap[c.field] = { status: 'conflict', label: 'DISPUTED', color: '#f97316', bg: '#fff7ed', border: '#ffedd5' };
-        } else if (gaps.some(g => g.field === c.field)) {
-          critStatusMap[c.field] = { status: 'gap', label: 'BLIND SPOT', color: '#ef4444', bg: '#fef2f2', border: '#fee2e2' };
+        if (conflicts.some(cf => getFieldKey(cf) === ck)) {
+          critStatusMap[ck] = { status: 'conflict', label: 'DISPUTED', color: '#f97316', bg: '#fff7ed', border: '#ffedd5' };
+        } else if (gaps.some(g => getFieldKey(g) === ck)) {
+          critStatusMap[ck] = { status: 'gap', label: 'BLIND SPOT', color: '#ef4444', bg: '#fef2f2', border: '#fee2e2' };
         } else {
-          const relevantFindings = findings.filter(f => f.field === c.field);
-          const sourcedCount = relevantFindings.filter(f => f.status === 'sourced').length;
+          const relevantFindings = findings.filter(f => getFieldKey(f) === ck);
+          const sourcedCount = relevantFindings.filter(f => isSourced(f)).length;
           if (sourcedCount >= numSources && numSources > 0) {
-            critStatusMap[c.field] = { status: 'sourced', label: 'VERIFIED', color: '#22c55e', bg: '#f0fdf4', border: '#bbf7d0' };
+            critStatusMap[ck] = { status: 'sourced', label: 'VERIFIED', color: '#22c55e', bg: '#f0fdf4', border: '#bbf7d0' };
           } else if (sourcedCount > 0) {
-            critStatusMap[c.field] = { status: 'partial', label: 'PARTIAL', color: '#f59e0b', bg: '#fffbeb', border: '#fef3c7' };
+            critStatusMap[ck] = { status: 'partial', label: 'PARTIAL', color: '#f59e0b', bg: '#fffbeb', border: '#fef3c7' };
           } else {
-            critStatusMap[c.field] = { status: 'gap', label: 'BLIND SPOT', color: '#ef4444', bg: '#fef2f2', border: '#fee2e2' };
+            critStatusMap[ck] = { status: 'gap', label: 'BLIND SPOT', color: '#ef4444', bg: '#fef2f2', border: '#fee2e2' };
           }
         }
       });
@@ -1904,20 +1920,23 @@
       usableSources.forEach(s => {
         const ySrc = srcYMap[s.id];
         checklist.forEach(c => {
-          const yCrit = critYMap[c.field];
-          const isConf = conflicts.some(cf => cf.field === c.field && ((cf.a && cf.a.source_id === s.id) || (cf.b && cf.b.source_id === s.id)));
-          const f = findings.find(find => find.source_id === s.id && find.field === c.field);
+          const ck = getFieldKey(c);
+          if (!ck) return;
+          const yCrit = critYMap[ck];
+          if (yCrit === undefined) return;
+          const isConf = conflicts.some(cf => getFieldKey(cf) === ck && ((cf.a && cf.a.source_id === s.id) || (cf.b && cf.b.source_id === s.id)));
+          const f = findings.find(find => find.source_id === s.id && getFieldKey(find) === ck);
 
-          let edgeType = 'gap';
+          let edgeType;
           if (isConf) edgeType = 'conflict';
-          else if (f && f.status === 'sourced') edgeType = 'sourced';
-          else if (f && f.status === 'uncertain') edgeType = 'uncertain';
+          else if (isSourced(f)) edgeType = 'sourced';
+          else if (f && f.reason) edgeType = 'uncertain';  // possible_miss or quote_not_found
           else edgeType = 'gap';
 
           const d = `M ${srcPortX} ${ySrc} C ${srcPortX + 160} ${ySrc}, ${critPortX - 160} ${yCrit}, ${critPortX} ${yCrit}`;
           pathsSvg += `
-            <path class="graph-edge edge-${edgeType}" data-source="${esc(s.id)}" data-field="${esc(c.field)}" data-type="${edgeType}" d="${d}">
-              <title>${esc(s.id)} &rarr; ${esc(c.label)}: ${edgeType.toUpperCase()}</title>
+            <path class="graph-edge edge-${edgeType}" data-source="${esc(s.id)}" data-field="${esc(ck)}" data-type="${edgeType}" d="${d}">
+              <title>${esc(s.id)} → ${esc(c.label)}: ${edgeType.toUpperCase()}</title>
             </path>
           `;
         });
@@ -1951,19 +1970,23 @@
       // 4. Build Criteria Nodes (Right Column)
       let criteriaSvg = '';
       checklist.forEach(c => {
-        const cy = critYMap[c.field];
+        const ck = getFieldKey(c);
+        if (!ck) return;
+        const cy = critYMap[ck];
+        if (cy === undefined) return;
         const yTop = cy - 26;
-        const stat = critStatusMap[c.field] || { status: 'gap', label: 'BLIND SPOT', color: '#ef4444', bg: '#fef2f2', border: '#fee2e2' };
+        const stat = critStatusMap[ck] || { status: 'gap', label: 'BLIND SPOT', color: '#ef4444', bg: '#fef2f2', border: '#fee2e2' };
         const labelShort = c.label.slice(0, 30) + (c.label.length > 30 ? '...' : '');
+        const importanceLabel = (c.importance || 'medium').toUpperCase();
 
         criteriaSvg += `
-          <g class="graph-node graph-node-crit" data-field="${esc(c.field)}" data-status="${stat.status}" data-label="${esc(c.label)}" onclick="selectGraphNode('crit', '${esc(c.field)}')" onmouseenter="hoverGraphNode('crit', '${esc(c.field)}')" onmouseleave="clearGraphHover()">
-            <title>${esc(c.label)} - Status: ${stat.label} - Click to inspect</title>
+          <g class="graph-node graph-node-crit" data-field="${esc(ck)}" data-status="${stat.status}" data-label="${esc(c.label)}" onclick="selectGraphNode('crit', '${esc(ck)}')" onmouseenter="hoverGraphNode('crit', '${esc(ck)}')" onmouseleave="clearGraphHover()">
+            <title>${esc(c.label)} — ${stat.label} — Click to inspect</title>
             <rect class="graph-node-rect" x="630" y="${yTop}" width="340" height="52" rx="10" />
             <rect x="630" y="${yTop}" width="5" height="52" rx="2" fill="${stat.color}" />
             <circle cx="${critPortX}" cy="${cy}" r="4.5" fill="${stat.color}" stroke="#ffffff" stroke-width="2" />
             <text class="graph-node-text" x="648" y="${cy - 3}">${esc(labelShort)}</text>
-            <text class="graph-node-subtext" x="648" y="${cy + 13}">Priority: ${esc(c.importance || 'HIGH')} &bull; Status: ${stat.label}</text>
+            <text class="graph-node-subtext" x="648" y="${cy + 13}">Priority: ${esc(importanceLabel)} · Status: ${stat.label}</text>
             <rect x="880" y="${cy - 10}" width="80" height="20" rx="10" fill="${stat.bg}" stroke="${stat.border}" stroke-width="1" />
             <text x="920" y="${cy + 4}" text-anchor="middle" font-size="9" font-weight="700" fill="${stat.color}">${stat.label}</text>
           </g>
@@ -1993,7 +2016,7 @@
           <div class="gap-graph-toolbar">
             <div class="gap-graph-filters">
               <button type="button" class="graph-filter-pill is-active" id="graph-pill-all" onclick="setGraphFilter('all')">
-                <span>All Relationships (${totalCrit})</span>
+                <span>All Relationships (${usableSources.length * totalCrit})</span>
               </button>
               <button type="button" class="graph-filter-pill" id="graph-pill-gaps" onclick="setGraphFilter('gaps')">
                 <span class="pill-dot" style="background:#ef4444;"></span>
@@ -2023,9 +2046,9 @@
             </div>
           </div>
 
-          <!-- Scalable SVG Canvas -->
+           <!-- Scalable SVG Canvas -->
           <div class="gap-graph-svg-wrap">
-            <svg class="gap-graph-svg" viewBox="0 0 ${svgWidth} ${svgHeight}" preserveAspectRatio="xMidYMid meet">
+            <svg class="gap-graph-svg" viewBox="0 0 ${svgWidth} ${svgHeight}" style="min-height:${svgHeight}px; height:${svgHeight}px;" preserveAspectRatio="xMinYMin meet">
               <!-- Column Labels -->
               <text x="30" y="28" font-size="12" font-weight="700" fill="var(--muted)" letter-spacing="0.05em">INGESTED SOURCES</text>
               <text x="630" y="28" font-size="12" font-weight="700" fill="var(--muted)" letter-spacing="0.05em">DECISION CHECKLIST CRITERIA</text>
